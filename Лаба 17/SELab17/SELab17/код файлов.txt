@@ -1,0 +1,1214 @@
+stdafx.h
+---------------------
+#pragma once
+#include <iostream>
+#include <cwchar>
+#include <locale>
+#include <tchar.h>
+#include <string>
+#include <vector>
+#include <cstdarg>
+#include <fstream>
+#include <cstring>
+using namespace std;
+#include "Error.h"
+#include "Parm.h"
+#include "FST.h"
+#include "LT.h" 
+#include "IT.h"
+#include "In.h"
+#include "Log.h"
+#include "Out.h"
+#include "lexer.h"
+
+stdafx.cpp
+--------------------
+#include "stdafx.h"
+
+Error.h
+--------------------
+#pragma once
+#define ERROR_THROW(id) Error::geterror(id);
+#define ERROR_THROW_IN(id, l, c) Error::geterrorin(id, l, c);
+#define ERROR_ENTRY(id, m) {id, m, {-1, -1}}
+#define ERROR_MAXSIZE_MESSAGE 200
+#define ERROR_ENTRY_NODEF(id)		ERROR_ENTRY(-id, "Неоппределённая ошибка")
+
+#define ERROR_ENTRY_NODEF10(id)		ERROR_ENTRY_NODEF(id + 0), ERROR_ENTRY_NODEF(id + 1), ERROR_ENTRY_NODEF(id + 2), ERROR_ENTRY_NODEF(id + 3), \
+									ERROR_ENTRY_NODEF(id + 4), ERROR_ENTRY_NODEF(id + 5), ERROR_ENTRY_NODEF(id + 6), ERROR_ENTRY_NODEF(id + 7), \
+									ERROR_ENTRY_NODEF(id + 8), ERROR_ENTRY_NODEF(id + 9)
+
+#define ERROR_ENTRY_NODEF100(id)	ERROR_ENTRY_NODEF10(id + 0), ERROR_ENTRY_NODEF10(id + 10), ERROR_ENTRY_NODEF10(id + 20), ERROR_ENTRY_NODEF10(id + 30), \
+									ERROR_ENTRY_NODEF10(id + 40), ERROR_ENTRY_NODEF10(id + 50), ERROR_ENTRY_NODEF10(id + 60), ERROR_ENTRY_NODEF10(id + 70), \
+									ERROR_ENTRY_NODEF10(id + 80), ERROR_ENTRY_NODEF10(id + 90)
+
+#define ERROR_MAX_ENTRY 1000
+
+namespace Error {
+	struct ERROR {
+		int id;
+		char message[ERROR_MAXSIZE_MESSAGE];
+		struct IN {
+			int line = 0;
+			int col = 0;
+		} inext;
+	};
+
+	ERROR geterror(int id);
+	ERROR geterrorin(int id, int line, int col);
+}
+
+Error.cpp
+--------------------------
+#include "stdafx.h"
+
+namespace Error {
+	ERROR errors[ERROR_MAX_ENTRY] = {
+		ERROR_ENTRY(0, "Недопустимый код ошибки"),
+		ERROR_ENTRY(1, "Системный сбой"),
+		ERROR_ENTRY_NODEF(2),ERROR_ENTRY_NODEF(3),ERROR_ENTRY_NODEF(4),
+		ERROR_ENTRY_NODEF(5),ERROR_ENTRY_NODEF(6),ERROR_ENTRY_NODEF(7), ERROR_ENTRY_NODEF(8), ERROR_ENTRY_NODEF(9),
+		ERROR_ENTRY_NODEF10(10), ERROR_ENTRY_NODEF10(20), ERROR_ENTRY_NODEF10(30), ERROR_ENTRY_NODEF10(40), ERROR_ENTRY_NODEF10(50),
+		ERROR_ENTRY_NODEF10(60), ERROR_ENTRY_NODEF10(70), ERROR_ENTRY_NODEF10(80), ERROR_ENTRY_NODEF10(90),
+		ERROR_ENTRY(100, "Параметр -in должени быть задан"),
+		ERROR_ENTRY_NODEF(101), ERROR_ENTRY_NODEF(102), ERROR_ENTRY_NODEF(103),
+		ERROR_ENTRY(104, "Превышена длина входного параметра"),
+		ERROR_ENTRY_NODEF(105), ERROR_ENTRY_NODEF(106), ERROR_ENTRY_NODEF(107),
+		ERROR_ENTRY_NODEF(108), ERROR_ENTRY_NODEF(109),
+		ERROR_ENTRY(110, "Ошибка при открытии файла с исходным кодом (-in)"),
+		ERROR_ENTRY(111, "Недопустимый символ в исходном файле (-in)"),
+		ERROR_ENTRY(112, "Ошибка при создании файла протокола (-log)"),
+		ERROR_ENTRY(113, "Ошибка при создании выходного файла (-out)"),
+		ERROR_ENTRY_NODEF(114), ERROR_ENTRY_NODEF(115),
+		ERROR_ENTRY_NODEF(116), ERROR_ENTRY_NODEF(117), ERROR_ENTRY_NODEF(118), ERROR_ENTRY_NODEF(119),
+		ERROR_ENTRY(120, "Превышен размер исходного файла"),
+		ERROR_ENTRY_NODEF(130), ERROR_ENTRY_NODEF(140), ERROR_ENTRY_NODEF(150),
+		ERROR_ENTRY_NODEF(160), ERROR_ENTRY_NODEF(170), ERROR_ENTRY_NODEF(180), ERROR_ENTRY_NODEF(190),
+
+		ERROR_ENTRY(200, "Превышен максимальный размер таблицы лексем"),
+		ERROR_ENTRY(201, "Превышено максимальное количество лексем в таблице"),
+
+		ERROR_ENTRY(300, "Превышен максимальный размер таблицы идентификаторов"),
+		ERROR_ENTRY(301, "Превышено максимальное количество идентификаторвов в таблице"),
+		ERROR_ENTRY(302, "Недопустимый индекс для получения идентификатора из таблицы идентификаторов"),
+
+		ERROR_ENTRY_NODEF(400), 
+		ERROR_ENTRY_NODEF(500),
+		ERROR_ENTRY_NODEF(600), 
+		ERROR_ENTRY_NODEF(700), 
+		ERROR_ENTRY_NODEF(800), 
+		ERROR_ENTRY_NODEF(900)
+	};
+	//по коду ошибки выьрасывается соответсвующая ошибка 
+	ERROR geterror(int id) {
+		if (id < 0 || id >= ERROR_MAX_ENTRY) {
+			return errors[0];
+		}
+		else {
+			return errors[id];
+		}
+	}
+	ERROR geterrorin(int id, int line = -1, int col = -1) {
+		ERROR error = geterror(id);
+		error.inext.line = line;
+		error.inext.col = col;
+		return error;
+	}
+}
+
+Parm.h
+------------------
+#pragma once
+#define PARM_IN		L"-in:"
+#define PARM_OUT	L"-out:"
+#define PARM_LOG	L"-log:"
+#define PARM_MAX_SIZE 300
+#define PARM_OUT_DEFAULT_EXT L".out"
+#define PARM_LOG_DEFAULT_EXT L".log"
+
+namespace Parm {
+	struct PARM {
+		wchar_t in[PARM_MAX_SIZE];
+		wchar_t out[PARM_MAX_SIZE];
+		wchar_t log[PARM_MAX_SIZE];
+	};
+
+	PARM getparm(int argc, _TCHAR* argv[]);
+};
+
+Parm.cpp
+--------------------
+#include "stdafx.h"
+
+namespace Parm {
+	//функция обрабатывает параметры командной строки
+	PARM getparm(int argc, _TCHAR* argv[]) {
+		PARM p = { L"", L"", L"" };
+		bool isInputProvided = false;
+		for (int i = 1; i < argc; ++i) {//проверка параметров, пропуская первый - названиие програмы
+			if (wcsstr(argv[i], PARM_IN)) {//если встретился ключ PARM_IN
+				if (wcslen(argv[i] + wcslen(PARM_IN)) > PARM_MAX_SIZE) {//проверка длины входного параметра
+					throw ERROR_THROW(104);
+				}
+				wcscpy_s(p.in, argv[i] + wcslen(PARM_IN));//запись имени файла в массив, пропуская ключ параметра
+				isInputProvided = true;//параметр найден
+			}
+			else if (wcsstr(argv[i], PARM_OUT)) {
+				if (wcslen(argv[i] + wcslen(PARM_OUT)) > PARM_MAX_SIZE) {
+					throw ERROR_THROW(104);
+				}
+				wcscpy_s(p.out, argv[i] + wcslen(PARM_OUT));
+			}
+			else if (wcsstr(argv[i], PARM_LOG)) {
+				if (wcslen(argv[i] + wcslen(PARM_LOG)) > PARM_MAX_SIZE) {
+					throw ERROR_THROW(104);
+				}
+				wcscpy_s(p.log, argv[i] + wcslen(PARM_LOG));
+			}
+		}
+		if (!isInputProvided) {//если параметр не найден
+			throw ERROR_THROW(100);
+		}
+
+		if (p.out[0] == '\0') {//если после ключа нет имени файла, установка имени файла по умолчанию
+			wcscpy_s(p.out, PARM_MAX_SIZE, p.in);
+			wcsncat_s(p.out, PARM_OUT_DEFAULT_EXT, wcslen(PARM_OUT_DEFAULT_EXT));
+		}
+		if (p.log[0] == '\0') {
+			wcscpy_s(p.log, PARM_MAX_SIZE, p.in);
+			wcsncat_s(p.log, PARM_LOG_DEFAULT_EXT, wcslen(PARM_LOG_DEFAULT_EXT));
+		}
+		return p;
+	}
+
+}
+
+In.h
+--------------------------
+#pragma once
+#define IN_MAX_LEN_TEXT 1024*1024
+#define IN_CODE_ENDL 10
+
+#define IN_CODE_TABLE {\
+	IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::T, IN::F,  '|',  IN::F, IN::F, IN::F, IN::F, IN::F,\
+	IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F,\
+	IN::T, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::F, IN::T,\
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::F, IN::T, IN::F, IN::F, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	\
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::I, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T  \
+}
+
+namespace In {
+	struct IN {
+		enum {T = 1024, F = 2048, I = 4096};
+		int size;
+		int lines;
+		int ignor;
+		std::vector<std::string> text;
+		int code[256] = IN_CODE_TABLE;
+	};
+	IN getin(wchar_t infile[]);
+}
+
+In.cpp
+-------------------
+#include "stdafx.h"
+
+
+namespace In {
+    void removeExtraSpaces(std::string& input) {
+        bool insideQuotes = false;
+        size_t i = 0;
+
+        while (i < input.length() && input[i] == ' ') {
+            input.erase(i, 1);
+        }
+
+        for (; i < input.length(); ++i) {
+            if (input[i] == '\'') {
+                insideQuotes = !insideQuotes;
+            }
+            if (!insideQuotes && input[i] == ' ') {
+                if (i == 0 || i == input.length() - 1) {
+                    input.erase(i, 1);
+                }
+                size_t spacesToRemove = 0;
+                while (i + spacesToRemove < input.length() && input[i + spacesToRemove] == ' ') {
+                    ++spacesToRemove;
+                }
+                if (spacesToRemove > 1) {
+                    input.erase(i + 1, spacesToRemove - 1);
+                }
+            }
+        }
+    }
+
+
+    void removeSpacesAroundOperators(string& input) {
+        const string operators = ";,}{()=+-/*";
+        for (size_t i = 0; i < input.length(); ++i) {
+            if (operators.find(input[i]) != string::npos) {
+                while (i > 0 && std::isspace(input[i - 1])) {
+                    input.erase(i - 1, 1);
+                    --i;
+                }
+                while (i + 1 < input.length() && std::isspace(input[i + 1])) {
+                    input.erase(i + 1, 1);
+                }
+            }
+        }
+    }
+
+    IN getin(wchar_t infile[]) {
+        ifstream fin;
+        char* outFile = new char[wcslen(infile) + 1];
+        wcstombs_s(NULL, outFile, wcslen(infile) + 1, infile, wcslen(infile) + 1);
+        fin.open(infile);
+        if (fin.bad()) {
+            throw ERROR_THROW(116);
+        }
+        if (!fin.is_open()) {
+            throw ERROR_THROW(110);
+        }
+
+        IN resultIn;
+        resultIn.size = 0;
+        resultIn.lines = 0;
+        resultIn.ignor = 0;
+        int position = 0;
+        int ch;
+        string currentLine;
+        string buffer;
+
+        while (getline(fin, buffer)) {
+            resultIn.lines++;
+            for (int i = 0; i < buffer.length(); i++) {
+                ch = buffer[i];
+                if (ch == fin.eof()) {
+                    break;
+                }
+                switch (resultIn.code[(unsigned char)ch]) {
+                case IN::F:
+                    resultIn.text.push_back(currentLine);
+                    throw ERROR_THROW_IN(111, resultIn.lines, ++position, buffer, resultIn.text);
+                    break;
+                case IN::I:
+                    resultIn.ignor++;
+                    position++;
+                    break;
+                case IN::T:
+                    currentLine += ch;
+                    position++;
+                    resultIn.size++;
+                    break;
+                default:
+                    currentLine += resultIn.code[(unsigned char)ch];
+                    resultIn.size++;
+                    position++;
+                    break;
+                }
+            }
+            if (!currentLine.empty()) {
+                resultIn.size++;
+                position++;
+                position = 0;
+                currentLine += resultIn.code[IN_CODE_ENDL];
+                removeExtraSpaces(currentLine);
+                removeSpacesAroundOperators(currentLine);
+                resultIn.text.push_back(currentLine);
+                currentLine.clear();
+            }
+        }
+
+        fin.close();
+        return resultIn;
+    }
+
+}
+
+Out.h
+-------------------
+#pragma once
+
+namespace Out {
+	struct OUT {
+		wchar_t outfile[PARM_MAX_SIZE];
+		ofstream* stream;
+	};
+
+	static const OUT INITOUT{ L"", NULL };
+	OUT getout(wchar_t const outfile[]);
+	void write_in_outfile(OUT out, In::IN in);
+	void WriteError(OUT out, Error::ERROR error);
+	void Close(OUT& out);
+}
+
+Out.cpp
+-------------------
+#include "stdafx.h"
+
+namespace Out {
+    //функция открытия или создания файла для записи
+    OUT getout(wchar_t const outfile[]) {
+        OUT out = INITOUT;
+        wcsncpy_s(out.outfile, PARM_MAX_SIZE, outfile, _TRUNCATE);//копирование имени файла в структуру out
+
+        out.stream = new ofstream(out.outfile);
+        if (!out.stream->is_open()) {
+            delete out.stream;
+            throw ERROR_THROW(113);
+        }
+        return out;
+    }
+
+    //функция записывает в файл преобразованный исходный код из перваначального файла
+    void write_in_outfile(OUT out, In::IN in) {
+        if (out.stream && out.stream->is_open()) {
+            for (const auto& line : in.text) {
+                out.stream->write(line.c_str(), line.size());
+            }
+        }
+    }
+
+
+
+
+    //вывод ошибок в файл
+    void WriteError(OUT out, Error::ERROR error) {
+        if (out.stream && out.stream->is_open()) {
+            if (error.inext.col > 0 && error.inext.line > 0) {
+                *out.stream << "Ошибка " << error.id << ": " << error.message << ", строка " << error.inext.line << ", позиция " << error.inext.col << std::endl;
+            }
+            else {
+                *out.stream << "Ошибка " << error.id << ": " << error.message << std::endl;
+            }
+        }
+        else {
+            if (error.inext.col > 0 && error.inext.line > 0) {
+                std::cout << "Ошибка " << error.id << ": " << error.message << ", строка " << error.inext.line << ", позиция " << error.inext.col << std::endl;
+            }
+            else {
+                std::cout << "Ошибка " << error.id << ": " << error.message << std::endl;
+            }
+        }
+    }
+
+    //закрытие файла
+    void Close(OUT& out) {
+        if (out.stream) {
+            out.stream->close();
+            delete out.stream;
+            out.stream = nullptr;
+        }
+    }
+}
+
+Log.h
+------------------
+#pragma once
+
+namespace Log {
+	struct LOG {
+		wchar_t logfile[PARM_MAX_SIZE];
+		wofstream* stream;
+	};
+
+	static const LOG INITLOG{ L"", NULL };
+	LOG getlog(wchar_t const logfile[]);
+	void WriteLine(LOG log, const char* c, ...);
+	void WriteLine(LOG log, const wchar_t* c, ...);
+	void WriteLog(LOG log);
+	void WriteParm(LOG log, Parm::PARM parm);
+	void WriteIn(LOG log, In::IN in);
+	void WriteError(LOG log, Error::ERROR error);
+	void Close(LOG &log);
+};
+
+Log.cpp
+---------------------
+#include "stdafx.h"
+
+namespace Log {
+	//функция создает или открывет файл с именем, передаваемым через параметр
+	LOG getlog(const wchar_t logfile[]) {
+		LOG log = INITLOG;
+		wcsncpy_s(log.logfile, PARM_MAX_SIZE, logfile, _TRUNCATE);
+
+		log.stream = new wofstream(log.logfile);
+		if (!log.stream->is_open()) {
+			throw ERROR_THROW(112);
+		}
+
+		return log;
+	}
+
+	//функция выводит в файл информацию, которая предается чререз парматры
+	void WriteLine(LOG log, const char* c, ...) {
+		va_list args;
+		va_start(args, c);
+
+		char buffer[1024];
+		vsnprintf(buffer, sizeof(buffer), c, args);
+
+		if (log.stream) {
+			*log.stream << buffer << endl;
+		}
+
+		va_end(args);
+	}
+
+	void WriteLine(LOG log, const wchar_t* c, ...) {
+		va_list args;
+		va_start(args, c);
+
+		wchar_t buffer[1024];
+		vswprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), c, args);
+
+		char converted[1024];
+		size_t converted_chars = 0;
+		wcstombs_s(&converted_chars, converted, sizeof(converted), buffer, _TRUNCATE);
+
+		if (log.stream) {
+			*log.stream << converted << endl;
+		}
+
+		va_end(args);
+	}
+
+	//функция выводит в файл время выполнения
+	void WriteLog(LOG log) {
+		if (log.stream) {
+			time_t now = time(nullptr);
+			tm local_time;
+			localtime_s(&local_time, &now);
+			char timestamp[64];
+			strftime(timestamp, sizeof(timestamp), "%d.%m.%y %H:%M:%S", &local_time);
+
+			*log.stream << "----- Протокол ----- " << timestamp << endl;
+		}
+	}
+
+	//функция записи в фалй параметров
+	void WriteParm(LOG log, Parm::PARM parm) {
+		if (log.stream) {
+			*log.stream << "----- Параметры -----" << endl;
+			*log.stream << "-in: " << parm.in << endl;
+			*log.stream << "-out: " << parm.out << endl;
+			*log.stream << "-log: " << parm.log << endl;
+		}
+	}
+
+	//функция записи в файл данных об исходном коде из файла
+	void WriteIn(LOG log, In::IN in) {
+		if (log.stream) {
+			*log.stream << "----- Исходные данные -----" << endl;
+			*log.stream << "Количество символов:	" << in.size << endl;
+			*log.stream << "Проигнорировано:	" << in.ignor << endl;
+			*log.stream << "Количество строк:	" << in.lines << endl;
+		}
+	}
+
+	//функция вывода ошибки в файл
+	void WriteError(LOG log, Error::ERROR error) {
+		if (log.stream) {
+			if (error.inext.col > 0 && error.inext.line > 0) {
+				*log.stream << "Ошибка " << error.id << ": " << error.message << ", строка " << error.inext.line << ", позиция " << error.inext.col << endl;
+			}
+			else {
+				*log.stream << "Ошибка " << error.id << ": " << error.message << endl;
+			}
+		}
+		else {
+			if (error.inext.col > 0 && error.inext.line > 0) {
+				cout << "Ошибка " << error.id << ": " << error.message << ", строка " << error.inext.line << ", позиция " << error.inext.col << endl;
+			}
+			else {
+				cout << "Ошибка " << error.id << ": " << error.message << endl;
+			}
+		}
+	}
+
+	//функция закрытия файла
+	void Close(LOG& log) {
+		if (log.stream) {
+			log.stream->close();
+			delete log.stream;
+			log.stream = nullptr;
+		}
+	}
+}
+
+FST.h
+-------------------
+#pragma once
+namespace FST {
+	struct RELATION {			//ребро:символ -> вершина графа переходов КА
+		char symbol;			//символ перехода
+		short nnode;			//номер смежной вершины
+		RELATION(
+			char,		//символ перехода
+			short		//новой состояние
+		);
+	};
+
+	struct NODE {				//вершина графа преходов
+		short n_relation;		//количество инцидентных ребер
+		RELATION* relations;	//инцидентные ребра
+		NODE();
+		NODE(
+			short n,			//количество инцидентных ребер
+			RELATION rel, ...	//список ребер
+		);
+	};
+
+	struct FST {				//недетерминированный КА
+		char* string;			//цепочка (строка, завершается 0х00)
+		short position;			//текущая позиция в цепочке
+		short nstates;			//количество состояний автомата
+		NODE* nodes;			//граф переходов: [0] - начальное состояние, [nstate-1] - конечное
+		short* rstates;			//возможные состояния автомата на данной позиции 
+		FST(
+			char* s,			//цепочка (строка, завершается 0х00)
+			short ns,			//количество состояний автомата
+			NODE n, ...			//список состояний (граф переходов)
+		);
+	};
+
+	bool execute(				//выплнить распознавание цепочки
+		FST& fst				//недетерминированный КА
+	);
+
+	bool step(FST& fst, short*& rstates);
+}
+
+FST.cpp
+-------------------
+#include "FST.h"
+#include <cstring>
+#include <utility>
+#include <iostream>
+#include <cstdarg>
+using namespace std;
+
+namespace FST {
+	RELATION::RELATION(char c = 0x00, short ns = -1) {
+		symbol = c;
+		nnode = ns;
+	}
+
+	NODE::NODE() {
+		n_relation = 0;
+		relations = nullptr;
+	}
+
+	NODE::NODE(short n, RELATION rel, ...) {
+		n_relation = n;
+		relations = new RELATION[n];
+		va_list args;
+		va_start(args, rel);
+		relations[0] = rel;
+		for (short i = 1; i < n; i++) {
+			relations[i] = va_arg(args, RELATION);
+		}
+		va_end(args);
+	}
+
+	FST::FST(char* s, short ns, NODE n, ...) {
+		string = s;
+		nstates = ns;
+		nodes = new NODE[ns];
+		va_list args;
+		va_start(args, n);
+		nodes[0] = n;
+		for (int k = 1; k < ns; k++) {
+			nodes[k] = va_arg(args, NODE);
+		}
+		va_end(args);
+		rstates = new short[nstates];
+		memset(rstates, 0xff, sizeof(short) * nstates);
+		rstates[0] = 0;
+		position = -1;
+	}
+
+	bool step(FST& fst, short*& rstates) {
+		bool rc = false;
+		swap(rstates, fst.rstates);
+
+		for (short i = 0; i < fst.nstates; i++) {
+			if (rstates[i] == fst.position) {
+				for (short j = 0; j < fst.nodes[i].n_relation; j++) {
+					if (fst.nodes[i].relations[j].symbol == fst.string[fst.position]) {
+						fst.rstates[fst.nodes[i].relations[j].nnode] = fst.position + 1;
+						rc = true;
+					}
+				}
+			}
+		}
+		return rc;
+	}
+
+	bool execute(FST& fst) {
+		short* rstates = new short[fst.nstates];
+		memset(rstates, 0xff, sizeof(short) * fst.nstates);
+		short lstring = strlen(fst.string);
+		bool rc = true;
+
+		for (short i = 0; i < lstring && rc; i++) {
+			fst.position++;
+			rc = step(fst, rstates);
+		}
+
+		rc = rc && (fst.rstates[fst.nstates - 1] == lstring);
+
+		delete[] rstates;
+		return rc;
+	}
+}
+
+IT.h
+------------------------
+#pragma once
+#define ID_MAXSIZE 5 // максимальное количество символов в идентификаторе
+#define TI_MAXSIZE 4096 // максимальное количество строк в таблице идентификаторов
+#define TI_INT_DEFAULT 0x00000000 // значение по умолчанию для типа integer
+#define TI_STR_DEFAULT 0x00 // значение по умолчанию для типа string
+#define TI_NULLIDX 0xffffffff // нет элемента таблицы идентификаторов
+#define TI_STR_MAXSIZE 255
+
+namespace IT { // таблица идентификаторов
+    enum IDDATATYPE { INT = 1, STR = 2 }; // типы данных идентификаторов: integer, string
+    enum IDTYPE { V = 1, F = 2, P = 3, L = 3 }; // типы идентификаторов: переменная, функция, параметр, литерал
+
+    struct Entry { // строка таблицы идентификаторов
+        int idxfirstLE; // индекс первой строки в таблице лексем
+        string id; // идентификатор
+        string fun; //название функции, к которой относится идентификатор
+        IDDATATYPE iddatatype; // тип данных
+        IDTYPE idtype; // тип идентификатора
+        string functionName;
+        char operation[256];
+        struct
+        {
+            int vint;
+            string vstr;
+            int len;
+
+            void setInteger(int value) {
+                vint = value;
+            }
+
+            void setString(string value) {
+                vstr = value;
+                len = value.length();
+            }
+        } value;
+    };
+
+
+    struct IdTable { // экземпляр таблицы идентификаторов
+        int maxsize; // емкость таблицы идентификаторов < TI_MAXSIZE
+        int size; // текущий размер таблицы идентификаторов < maxsize
+        Entry* table; // массив строк таблицы идентификаторов
+    };
+
+    IdTable Create(int size); // создать таблицу идентификаторов с емкостью < TI_MAXSIZE
+
+    void Add(IdTable& idtable, Entry entry); // добавить строку в таблицу идентификаторов
+
+    Entry GetEntry(IdTable& idtable, int n); // получить строку таблицы идентификаторов по номеру
+
+    void Delete(IdTable& idtable); // удалить таблицу лексем (освободить память)
+
+    int IsId(IdTable& idtable, string word, string functionName, string function); // возврат: номер строки (если есть), TI_NULLIDX (если нет)
+};
+
+
+IT.cpp
+-------------------
+#include "stdafx.h"
+
+namespace IT {
+	IdTable Create(int size) {
+		if (size >= TI_MAXSIZE) {
+			throw ERROR_THROW(300);
+		}
+
+		IdTable idtable;
+		idtable.maxsize = size;
+		idtable.size = 0;
+		idtable.table = new Entry[size];
+		
+		return idtable;
+	}
+	
+	void Add(IdTable& idtable, Entry entry) {
+		if (idtable.size > idtable.maxsize) {
+			throw ERROR_THROW(301);
+		}
+
+		idtable.table[idtable.size] = entry;
+		idtable.size++;
+	}
+
+	Entry GetEntry(IdTable& idtable, int n) {
+		if (n < 0 || n >= idtable.size) {
+			throw ERROR_THROW(302);
+		}
+		return idtable.table[n];
+	}
+
+	void Delete(IdTable& idtable) {
+		delete[] idtable.table;
+		idtable.size = 0;
+		idtable.maxsize = 0;
+	}
+
+	int IsId(IdTable& idtable, string id, string functionName, string function) {
+		for (int i = idtable.size; i >= 0; i--) {
+			if (idtable.table[i].id == id && (idtable.table[i].fun == function || idtable.table[i].functionName == functionName)) {
+				return i;
+			}
+		}
+		return TI_NULLIDX;
+	}
+
+	int findLexInteger(IdTable& idtable, int word) {
+		for (int n = idtable.size; n >= 0; n--) {
+			if (idtable.table[n].value.vint == word) {
+				return n; // Вернуть индекс, если целочисленное значение найдено
+			}
+		}
+		return TI_NULLIDX; // Вернуть специальное значение, если целочисленное значение не найдено
+	}
+
+	int findLexStr(IdTable& idtable, std::string word) {
+		for (int n = idtable.size; n >= 0; n--) {
+			if (idtable.table[n].value.vstr == word) {
+				return n; // Вернуть индекс, если строковое значение найдено
+			}
+		}
+		return TI_NULLIDX; // Вернуть специальное значение, если строковое значение не найдено
+	}
+}
+
+LT.h
+-------------------
+#pragma once
+
+#define LEXEMA_FIXSIZE 1	// Фиксированный размер лексемы
+#define LT_MAXSIZE 4096		// Максимальный размер таблицы лексем
+#define LT_TI_NULLIDX 0xffffffff	// Нет записи в таблице идентификаторов
+#define LEX_INTEGER		't'	// Лексема для целых чисел
+#define LEX_STRING		't'	// Лексема для строк
+#define LEX_LITERAL		'l'	// Лексема для литералов
+#define LEX_ID			'i'	// Лексема для идентификаторов
+#define LEX_FUNCTION	'f'	// Лексема для функций
+#define LEX_MAINFUNC	'm'	// Лексема для главной функции
+#define LEX_DECLARE		'd'	// Лексема для объявлений
+#define LEX_RETURN		'r'	// Ключевое слово return
+#define LEX_PRINT		'p'	// Ключевое слово print
+#define LEX_SEMICOLON	';'	// ;
+#define LEX_COMMA		','	// ,
+#define LEX_LEFTBRACE	'{'	// {
+#define LEX_RIGHTBRACE	'}'	// }
+#define LEX_LEFTHESIS	'('	// (
+#define LEX_RIGHTHESIS	')'	// )
+#define LEX_PLUS		'v'	// +
+#define LEX_MINUS		'v'	// -
+#define LEX_STAR		'v'	// *
+#define LEX_DIRSLASH	'v'	// /
+#define LEX_RAV			'='	// =
+#define LIB_FUNCTION1 "substr"
+#define LIB_FUNCTION2 "strlen"
+
+
+namespace LT {	// Пространство имен для таблицы лексем
+	struct Entry {	// Структура для представления записи в таблице лексем
+		unsigned char lexema[LEXEMA_FIXSIZE];	/// Лексема
+		int sn;			/// Номер строки в исходном коде
+		int idxTI;		/// Индекс в таблице идентификаторов или LT_TI_NULLIDX
+	};
+
+	struct LexTable	{	// Структура для таблицы лексем
+		int maxsize;	/// Максимальный размер таблицы < LT_MAXSIZE
+		int size;		/// Текущий размер таблицы < maxsize
+		Entry* table;	/// Массив записей таблицы лексем
+	};
+
+	LexTable Create( // Создать таблицу лексем
+		int size	/// Размер таблицы лексем < LT_MAXSIZE
+	);
+	void Add(				// Добавить запись в таблицу лексем
+		LexTable& lextable, /// Ссылка на таблицу лексем
+		Entry entry			/// Запись для добавления
+	);
+
+	Entry GetEntry(			// Получить запись из таблицы лексем по индексу
+		LexTable& lextable,	/// Ссылка на таблицу лексем
+		int n				/// Индекс записи
+	);
+
+	void Delete(LexTable& lextable); // Удалить таблицу лексем (освободить память)
+};
+
+LT.cpp
+--------------------
+#include "stdafx.h"
+
+namespace LT {
+    LexTable Create(int size) {
+        LexTable* table = new LexTable;
+        
+        if (size > LT_MAXSIZE) {
+            throw ERROR_THROW(200);
+        }
+        table->maxsize = size;
+        table->size = 0;
+        table->table = new Entry[size];
+
+        return *table;
+    }
+
+    void Add(LexTable& lextable, Entry entry) {
+        if (lextable.size + 1 > lextable.maxsize) {
+            throw ERROR_THROW(201);
+        }
+        lextable.table[lextable.size] = entry;
+        lextable.size++;
+    }
+
+    Entry GetEntry(LexTable& lextable, int n) {
+        return lextable.table[n];
+    }
+
+    void Delete(LexTable& lextable) {
+        delete[] lextable.table;
+    }
+}
+
+lexer.h
+-----------------
+#pragma once
+#include "stdafx.h"
+
+namespace Lexer {
+	void parse(In::IN in, LT::LexTable& lextable, IT::IdTable& idtable);
+	bool chek(string l, FST::FST fst);
+}
+
+lexer.cpp
+------------------
+#include "lexer.h"
+
+namespace Lexer {
+	FST::FST typeInteger((char*)"", 8,
+		FST::NODE(1, FST::RELATION('i', 1)),
+		FST::NODE(1, FST::RELATION('n', 2)),
+		FST::NODE(1, FST::RELATION('t', 3)),
+		FST::NODE(1, FST::RELATION('e', 4)),
+		FST::NODE(1, FST::RELATION('g', 5)),
+		FST::NODE(1, FST::RELATION('e', 6)),
+		FST::NODE(1, FST::RELATION('r', 7)),
+		FST::NODE()
+	);
+
+	FST::FST typeString((char*)"", 7,
+		FST::NODE(1, FST::RELATION('s', 1)),
+		FST::NODE(1, FST::RELATION('t', 2)),
+		FST::NODE(1, FST::RELATION('r', 3)),
+		FST::NODE(1, FST::RELATION('i', 4)),
+		FST::NODE(1, FST::RELATION('n', 5)),
+		FST::NODE(1, FST::RELATION('g', 6)),
+		FST::NODE()
+	);
+
+	FST::FST typeFunction((char*)"", 9,
+		FST::NODE(1, FST::RELATION('f', 1)),
+		FST::NODE(1, FST::RELATION('u', 2)),
+		FST::NODE(1, FST::RELATION('n', 3)),
+		FST::NODE(1, FST::RELATION('c', 4)),
+		FST::NODE(1, FST::RELATION('t', 5)),
+		FST::NODE(1, FST::RELATION('i', 6)),
+		FST::NODE(1, FST::RELATION('o', 7)),
+		FST::NODE(1, FST::RELATION('n', 8)),
+		FST::NODE()
+	);
+
+	FST::FST typeDeclare((char*)"", 8,
+		FST::NODE(1, FST::RELATION('d', 1)),
+		FST::NODE(1, FST::RELATION('e', 2)),
+		FST::NODE(1, FST::RELATION('c', 3)),
+		FST::NODE(1, FST::RELATION('l', 4)),
+		FST::NODE(1, FST::RELATION('a', 5)),
+		FST::NODE(1, FST::RELATION('r', 6)),
+		FST::NODE(1, FST::RELATION('e', 7)),
+		FST::NODE()
+	);
+
+	FST::FST typeReturn((char*)"", 7,
+		FST::NODE(1, FST::RELATION('r', 1)),
+		FST::NODE(1, FST::RELATION('e', 2)),
+		FST::NODE(1, FST::RELATION('t', 3)),
+		FST::NODE(1, FST::RELATION('u', 4)),
+		FST::NODE(1, FST::RELATION('r', 5)),
+		FST::NODE(1, FST::RELATION('n', 6)),
+		FST::NODE()
+	);
+
+	FST::FST typeMain((char*)"", 5,
+		FST::NODE(1, FST::RELATION('m', 1)),
+		FST::NODE(1, FST::RELATION('a', 2)),
+		FST::NODE(1, FST::RELATION('i', 3)),
+		FST::NODE(1, FST::RELATION('n', 4)),
+		FST::NODE()
+	);
+
+	FST::FST typePrint((char*)"", 6,
+		FST::NODE(1, FST::RELATION('p', 1)),
+		FST::NODE(1, FST::RELATION('r', 2)),
+		FST::NODE(1, FST::RELATION('i', 3)),
+		FST::NODE(1, FST::RELATION('n', 4)),
+		FST::NODE(1, FST::RELATION('t', 5)),
+		FST::NODE()
+	);
+
+	FST::FST typeSpace((char*)"", 2,
+		FST::NODE(1, FST::RELATION(' ', 1)),
+		FST::NODE()
+	);
+	FST::FST typeLeftBrace((char*)"", 2,
+		FST::NODE(1, FST::RELATION('{', 1)),
+		FST::NODE()
+	);
+	FST::FST typeRightBrace((char*)"", 2,
+		FST::NODE(1, FST::RELATION('}', 1)),
+		FST::NODE()
+	);
+	FST::FST typeLeftThesis((char*)"", 2,
+		FST::NODE(1, FST::RELATION('(', 1)),
+		FST::NODE()
+	);
+	FST::FST typeRightThesis((char*)"", 2,
+		FST::NODE(1, FST::RELATION(')', 1)),
+		FST::NODE()
+	);
+	FST::FST typeSemicolon((char*)"", 2,
+		FST::NODE(1, FST::RELATION(';', 1)),
+		FST::NODE()
+	);
+	FST::FST typeComma((char*)"", 2,
+		FST::NODE(1, FST::RELATION(',', 1)),
+		FST::NODE()
+	);
+	FST::FST typePlus((char*)"", 2,
+		FST::NODE(1, FST::RELATION('+', 1)),
+		FST::NODE()
+	);
+	FST::FST typeMinus((char*)"", 2,
+		FST::NODE(1, FST::RELATION('-', 1)),
+		FST::NODE()
+	);
+	FST::FST typeDel((char*)"", 2,
+		FST::NODE(1, FST::RELATION('/', 1)),
+		FST::NODE()
+	);
+	FST::FST typeMulti((char*)"", 2,
+		FST::NODE(1, FST::RELATION('*', 1)),
+		FST::NODE()
+	);
+	FST::FST typeEquals((char*)"", 2,
+		FST::NODE(1, FST::RELATION('=', 1)),
+		FST::NODE()
+	);
+
+	FST::FST typeIdentificator((char*)"", 2,
+		FST::NODE(52,
+			FST::RELATION('a', 0), FST::RELATION('b', 0),
+			FST::RELATION('c', 0), FST::RELATION('d', 0),
+			FST::RELATION('e', 0), FST::RELATION('f', 0),
+			FST::RELATION('g', 0), FST::RELATION('h', 0),
+			FST::RELATION('i', 0), FST::RELATION('j', 0),
+			FST::RELATION('k', 0), FST::RELATION('l', 0),
+			FST::RELATION('m', 0), FST::RELATION('n', 0),
+			FST::RELATION('o', 0), FST::RELATION('p', 0),
+			FST::RELATION('q', 0), FST::RELATION('r', 0),
+			FST::RELATION('s', 0), FST::RELATION('t', 0),
+			FST::RELATION('u', 0), FST::RELATION('v', 0),
+			FST::RELATION('w', 0), FST::RELATION('x', 0),
+			FST::RELATION('y', 0), FST::RELATION('z', 0),
+
+			FST::RELATION('a', 1), FST::RELATION('b', 1),
+			FST::RELATION('c', 1), FST::RELATION('d', 1),
+			FST::RELATION('e', 1), FST::RELATION('f', 1),
+			FST::RELATION('g', 1), FST::RELATION('h', 1),
+			FST::RELATION('i', 1), FST::RELATION('j', 1),
+			FST::RELATION('k', 1), FST::RELATION('l', 1),
+			FST::RELATION('m', 1), FST::RELATION('n', 1),
+			FST::RELATION('o', 1), FST::RELATION('p', 1),
+			FST::RELATION('q', 1), FST::RELATION('r', 1),
+			FST::RELATION('s', 1), FST::RELATION('t', 1),
+			FST::RELATION('u', 1), FST::RELATION('v', 1),
+			FST::RELATION('w', 1), FST::RELATION('x', 1),
+			FST::RELATION('y', 1), FST::RELATION('z', 1)
+		),
+
+		FST::NODE()
+	);
+
+	FST::FST typeStringLiteral((char*)"", 4,
+		//                      
+		FST::NODE(1,
+			FST::RELATION('\'', 1)),
+		FST::NODE(384,
+			FST::RELATION('!', 2), FST::RELATION('@', 2), FST::RELATION('#', 2), FST::RELATION('$', 2), FST::RELATION('%', 2), FST::RELATION('^', 2),
+			FST::RELATION('&', 2), FST::RELATION('*', 2), FST::RELATION('(', 2), FST::RELATION(')', 2), FST::RELATION('-', 2), FST::RELATION('_', 2),
+			FST::RELATION('+', 2), FST::RELATION('=', 2), FST::RELATION('~', 2), FST::RELATION('`', 2), FST::RELATION('1', 2), FST::RELATION('2', 2),
+			FST::RELATION('3', 2), FST::RELATION('4', 2), FST::RELATION('5', 2), FST::RELATION('6', 2), FST::RELATION('7', 2), FST::RELATION('8', 2),
+			FST::RELATION('9', 2), FST::RELATION('0', 2), FST::RELATION('	', 2), FST::RELATION(' ', 2), FST::RELATION('q', 2), FST::RELATION('w', 2),
+			FST::RELATION('e', 2), FST::RELATION('r', 2), FST::RELATION('t', 2), FST::RELATION('y', 2), FST::RELATION('u', 2), FST::RELATION('i', 2),
+			FST::RELATION('o', 2), FST::RELATION('p', 2), FST::RELATION('{', 2), FST::RELATION('[', 2), FST::RELATION('}', 2), FST::RELATION(']', 2),
+			FST::RELATION('\\', 2), FST::RELATION('|', 2), FST::RELATION('Q', 2), FST::RELATION('W', 2), FST::RELATION('R', 2), FST::RELATION('T', 2), FST::RELATION('Y', 2),
+			FST::RELATION('U', 2), FST::RELATION('I', 2), FST::RELATION('O', 2), FST::RELATION('P', 2), FST::RELATION('a', 2), FST::RELATION('s', 2),
+			FST::RELATION('d', 2), FST::RELATION('f', 2), FST::RELATION('g', 2), FST::RELATION('h', 2), FST::RELATION('j', 2), FST::RELATION('k', 2),
+			FST::RELATION('l', 2), FST::RELATION(':', 2), FST::RELATION(';', 2), FST::RELATION('\'', 2), FST::RELATION('"', 2), FST::RELATION('A', 2),
+			FST::RELATION('S', 2), FST::RELATION('D', 2), FST::RELATION('F', 2), FST::RELATION('G', 2), FST::RELATION('H', 2), FST::RELATION('J', 2),
+			FST::RELATION('K', 2), FST::RELATION('L', 2), FST::RELATION('z', 2), FST::RELATION('x', 2), FST::RELATION('c', 2), FST::RELATION('v', 2),
+			FST::RELATION('b', 2), FST::RELATION('n', 2), FST::RELATION('m', 2), FST::RELATION(',', 2), FST::RELATION('.', 2), FST::RELATION('/', 2),
+			FST::RELATION('Z', 2), FST::RELATION('X', 2), FST::RELATION('C', 2), FST::RELATION('V', 2), FST::RELATION('B', 2), FST::RELATION('N', 2),
+			FST::RELATION('M', 2), FST::RELATION('<', 2), FST::RELATION('>', 2), FST::RELATION('?', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION('!', 1), FST::RELATION('@', 1), FST::RELATION('#', 1), FST::RELATION('$', 1), FST::RELATION('%', 1), FST::RELATION('^', 1),
+			FST::RELATION('&', 1), FST::RELATION('*', 1), FST::RELATION('(', 1), FST::RELATION(')', 1), FST::RELATION('-', 1), FST::RELATION('_', 1),
+			FST::RELATION('+', 1), FST::RELATION('=', 1), FST::RELATION('~', 1), FST::RELATION('`', 1), FST::RELATION('1', 1), FST::RELATION('2', 1),
+			FST::RELATION('3', 1), FST::RELATION('4', 1), FST::RELATION('5', 1), FST::RELATION('6', 1), FST::RELATION('7', 1), FST::RELATION('8', 1),
+			FST::RELATION('9', 1), FST::RELATION('0', 1), FST::RELATION('	', 1), FST::RELATION(' ', 1), FST::RELATION('q', 1), FST::RELATION('w', 1),
+			FST::RELATION('e', 1), FST::RELATION('r', 1), FST::RELATION('t', 1), FST::RELATION('y', 1), FST::RELATION('u', 1), FST::RELATION('i', 1),
+			FST::RELATION('o', 1), FST::RELATION('p', 1), FST::RELATION('{', 1), FST::RELATION('[', 1), FST::RELATION('}', 1), FST::RELATION(']', 1),
+			FST::RELATION('\\', 1), FST::RELATION('|', 1), FST::RELATION('Q', 1), FST::RELATION('W', 1), FST::RELATION('R', 1), FST::RELATION('T', 1), FST::RELATION('Y', 1),
+			FST::RELATION('U', 1), FST::RELATION('I', 1), FST::RELATION('O', 1), FST::RELATION('P', 1), FST::RELATION('a', 1), FST::RELATION('s', 1),
+			FST::RELATION('d', 1), FST::RELATION('f', 1), FST::RELATION('g', 1), FST::RELATION('h', 1), FST::RELATION('j', 1), FST::RELATION('k', 1),
+			FST::RELATION('l', 1), FST::RELATION(':', 1), FST::RELATION(';', 1), FST::RELATION('\'', 1), FST::RELATION('"', 1), FST::RELATION('A', 1),
+			FST::RELATION('S', 1), FST::RELATION('D', 1), FST::RELATION('F', 1), FST::RELATION('G', 1), FST::RELATION('H', 1), FST::RELATION('J', 1),
+			FST::RELATION('K', 1), FST::RELATION('L', 1), FST::RELATION('z', 1), FST::RELATION('x', 1), FST::RELATION('c', 1), FST::RELATION('v', 1),
+			FST::RELATION('b', 1), FST::RELATION('n', 1), FST::RELATION('m', 1), FST::RELATION(',', 1), FST::RELATION('.', 1), FST::RELATION('/', 1),
+			FST::RELATION('Z', 1), FST::RELATION('X', 1), FST::RELATION('C', 1), FST::RELATION('V', 1), FST::RELATION('B', 1), FST::RELATION('N', 1),
+			FST::RELATION('M', 1), FST::RELATION('<', 1), FST::RELATION('>', 1), FST::RELATION('?', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1)
+		),
+		FST::NODE(1,
+			FST::RELATION('\'', 3)),
+		FST::NODE()
+	);
+
+	FST::FST typeNumbLiteral((char*)"", 3,
+		FST::NODE(20,
+			FST::RELATION('0', 2), FST::RELATION('1', 2), FST::RELATION('2', 2), FST::RELATION('3', 2), FST::RELATION('4', 2),
+			FST::RELATION('5', 2), FST::RELATION('6', 2), FST::RELATION('7', 2), FST::RELATION('8', 2), FST::RELATION('9', 2),
+			FST::RELATION('1', 1), FST::RELATION('2', 1), FST::RELATION('3', 1), FST::RELATION('4', 1),
+			FST::RELATION('5', 1), FST::RELATION('6', 1), FST::RELATION('7', 1), FST::RELATION('8', 1), FST::RELATION('9', 1)),
+
+		FST::NODE(20,
+			FST::RELATION('0', 2), FST::RELATION('1', 2), FST::RELATION('2', 2), FST::RELATION('3', 2), FST::RELATION('4', 2),
+			FST::RELATION('5', 2), FST::RELATION('6', 2), FST::RELATION('7', 2), FST::RELATION('8', 2), FST::RELATION('9', 2),
+			FST::RELATION('0', 1), FST::RELATION('1', 1), FST::RELATION('2', 1), FST::RELATION('3', 1), FST::RELATION('4', 1),
+			FST::RELATION('5', 1), FST::RELATION('6', 1), FST::RELATION('7', 1), FST::RELATION('8', 1), FST::RELATION('9', 1)),
+
+		FST::NODE()
+	);
+
+
+	void parse(In::IN in, LT::LexTable& lextable, IT::IdTable& idtable) {
+
+	}
+
+	bool chek(string l, FST::FST fst) {
+		return ;
+	}
+
+	
+}
+
+
+
+main.cpp
+-----------------
+#include "stdafx.h"
+
+
+
+int _tmain(int argc, _TCHAR* argv[]) {
+    setlocale(LC_ALL, ".1251");
+    Log::LOG log = Log::INITLOG;
+    Out::OUT out = Out::INITOUT;
+    Parm::PARM parm;
+    In::IN in;
+    
+    try {
+        parm = Parm::getparm(argc, argv);
+        wcout << "-in:" << parm.in << ", -out:" << parm.out << ", -log:" << parm.log << endl << endl;
+
+        log = Log::getlog(parm.log);
+        Log::WriteLine(log, "Тест: %s", "без ошибок");
+        Log::WriteLine(log, L"Тест: %ls", L"без ошибок");
+        Log::WriteLog(log);
+        Log::WriteParm(log, parm);
+        
+        out = Out::getout(parm.out);
+
+        in = In::getin(parm.in);
+        for (size_t i = 0; i < in.text.size(); i++)
+        {
+            cout << in.text[i];
+        }
+        cout << endl;
+        
+        cout << endl;
+        cout << "Всего символов: " << in.size << endl;
+        cout << "Всего строк: " << in.lines << endl;
+        cout << "Пропущено: " << in.ignor << endl;
+
+        Log::WriteIn(log, in);
+        Out::write_in_outfile(out, in);
+
+        Log::Close(log);
+        Out::Close(out);
+    }
+    catch (Error::ERROR e) {
+        cout << "Ошибка " << e.id << ": " << e.message << ", строка " << e.inext.line << ", позиция " << e.inext.col << endl;
+        Log::WriteError(log, e);
+        Out::WriteError(out, e);
+    };
+
+    return 0;
+}

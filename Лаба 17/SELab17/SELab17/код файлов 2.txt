@@ -1,0 +1,2469 @@
+Лексический анализатор
+
+stdafx.h
+---------------
+
+#pragma once
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
+#include <string>
+#include <mbstring.h>
+#include <fstream>
+#include <cwchar>
+#include <TCHAR.H>
+#include <vector>
+#include <time.h>
+#include <locale>
+#include <iomanip>
+
+#include "Error.h"
+#include "Parm.h"
+#include "FST.h"
+#include "LT.h" 
+#include "IT.h"
+#include "In.h"
+#include "Log.h"
+#include "Out.h"
+#include "Lexer.h"
+
+Error.h
+-----------------
+#pragma once
+#define ERROR_THROW(id) Error::geterror(id); // throw ERROR_THROW(id)
+#define ERROR_THROW_IN(id, l, c, buff, arr) Error::geterrorin(id, l, c, buff, arr); // throw ERROR_THROW_IN
+#define ERROR_THROW_FST(id, index, buffer) Error::geterrorfst(id, index, buffer); // throw ERROR_THROW_IN
+#define ERROR_ENTRY(id, m) {id, m, {-1, -1}} // элемент таблицы ошибок
+#define ERROR_MAXSIZE_MESSAGE 200 // максимальная длина сообщения об ошибке
+#define ERROR_ENTRY_NODEF(id) ERROR_ENTRY(-id, "Неопределенная ошибка") // 1 неопр эл табл ошибок
+// ERROR_ENTRY_NODEF10(id) - 10 неопр эл таблицы ошибок
+#define ERROR_ENTRY_NODEF10(id) ERROR_ENTRY_NODEF(id+0),ERROR_ENTRY_NODEF(id+1),ERROR_ENTRY_NODEF(id+2), ERROR_ENTRY_NODEF(id+3), \
+								ERROR_ENTRY_NODEF(id+4), ERROR_ENTRY_NODEF(id+5), ERROR_ENTRY_NODEF(id+6), ERROR_ENTRY_NODEF(id+7), \
+								ERROR_ENTRY_NODEF(id+8), ERROR_ENTRY_NODEF(id+9)
+// ERROR_ENTRY_NODEF100(id) - 100 неопр эл табл ошибок
+#define ERROR_ENTRY_NODEF100(id) ERROR_ENTRY_NODEF(id+0),ERROR_ENTRY_NODEF(id+10),ERROR_ENTRY_NODEF(id+2), ERROR_ENTRY_NODEF(id+3), \
+								ERROR_ENTRY_NODEF(id+40), ERROR_ENTRY_NODEF(id+50), ERROR_ENTRY_NODEF(id+6), ERROR_ENTRY_NODEF(id+7), \
+								ERROR_ENTRY_NODEF(id+80), ERROR_ENTRY_NODEF(id+90)
+
+#define ERROR_MAX_ENTRY 1000 //количество эл в таблице ошибок
+
+namespace Error
+{
+	struct ERROR // тип исключения для throw ERROR_THROW | ERROR_THROW_IN
+	{
+		int id; // код ошибки
+		char message[ERROR_MAXSIZE_MESSAGE]; // сообщение об ошибке
+		struct IN // расширение для ошибок при обработке входных данных
+		{
+			short line; // номер строки (0, 1, 2, ...)
+			short col; //номер столбца(0, 1, 2, ...)
+			std::string buff;
+			short fstline;
+
+			std::vector<std::string>MyVector;
+		}inext;
+	};
+	ERROR geterror(int id); // сформировать ERROR для ERROR_THROW
+	ERROR geterrorin(int id, int line, int col, std::string buff, std::vector<std::string>MyVector); // сформировать ERROR для ERROR_THROW_IN
+	ERROR geterrorfst(int id, int fstline, std::string buff);
+};
+
+Error.cpp
+----------------
+#include "stdafx.h" // Подключение предварительно скомпилированного заголовочного файла
+#include "Error.h" // Подключение заголовочного файла Error.h
+
+namespace Error { // Начало пространства имен Error
+	// серии ошибок: 0 - 99 - системные ошибки
+	//				100 - 109 - ошибки параметров 
+	//				110 - 119 - ошибки открытия и чтения
+	ERROR errors[ERROR_MAX_ENTRY] = // Объявление и инициализация массива ошибок
+	{
+		ERROR_ENTRY(0, "Недопустимый код ошмибки"), // Ошибка с кодом 0 и сообщением
+		ERROR_ENTRY(1, "Системный сбой"), // Ошибка с кодом 1 и сообщением
+		ERROR_ENTRY_NODEF(2), // Неопределенная ошибка с кодом 2
+		ERROR_ENTRY_NODEF(3), // Неопределенная ошибка с кодом 3
+		ERROR_ENTRY_NODEF(4), // Неопределенная ошибка с кодом 4
+		ERROR_ENTRY_NODEF(5), // Неопределенная ошибка с кодом 5
+		ERROR_ENTRY_NODEF(6), // Неопределенная ошибка с кодом 6
+		ERROR_ENTRY_NODEF(7), // Неопределенная ошибка с кодом 7
+		ERROR_ENTRY_NODEF(8), // Неопределенная ошибка с кодом 8
+		ERROR_ENTRY_NODEF(9), // Неопределенная ошибка с кодом 9
+		ERROR_ENTRY_NODEF10(10), // Неопределенная ошибка с кодом 10
+		ERROR_ENTRY_NODEF10(20), // Неопределенная ошибка с кодом 20
+		ERROR_ENTRY_NODEF10(30), // Неопределенная ошибка с кодом 30
+		ERROR_ENTRY_NODEF10(40), // Неопределенная ошибка с кодом 40
+		ERROR_ENTRY_NODEF10(50), // Неопределенная ошибка с кодом 50
+		ERROR_ENTRY_NODEF10(60), // Неопределенная ошибка с кодом 60
+		ERROR_ENTRY_NODEF10(70), // Неопределенная ошибка с кодом 70
+		ERROR_ENTRY_NODEF10(80), // Неопределенная ошибка с кодом 80
+		ERROR_ENTRY_NODEF10(90), // Неопределенная ошибка с кодом 90
+		ERROR_ENTRY(100, "Параметр -in должен быть задан"), // Ошибка с кодом 100 и сообщением
+		ERROR_ENTRY_NODEF(101), // Неопределенная ошибка с кодом 101
+		ERROR_ENTRY_NODEF(102), // Неопределенная ошибка с кодом 102
+		ERROR_ENTRY_NODEF(103), // Неопределенная ошибка с кодом 103
+		ERROR_ENTRY(104, "Превышена длина входного параметра"), // Ошибка с кодом 104 и сообщением
+		ERROR_ENTRY_NODEF(105), // Неопределенная ошибка с кодом 105
+		ERROR_ENTRY_NODEF(106), // Неопределенная ошибка с кодом 106
+		ERROR_ENTRY_NODEF(107), // Неопределенная ошибка с кодом 107
+		ERROR_ENTRY_NODEF(108), // Неопределенная ошибка с кодом 108
+		ERROR_ENTRY_NODEF(109), // Неопределенная ошибка с кодом 109
+		ERROR_ENTRY(110, "Ошибка при открытии файла с исходным кодом (-in)"), // Ошибка с кодом 110 и сообщением
+		ERROR_ENTRY(111, "Недопустимый символ в исходном файле (-in)"), // Ошибка с кодом 111 и сообщением
+		ERROR_ENTRY(112, "Ошибка при создании файла протокола (-log)"), // Ошибка с кодом 112 и сообщением
+		ERROR_ENTRY(113, "Ошибка при создании выходного файла (-out)"), // Ошибка с кодом 113 и сообщением
+		ERROR_ENTRY(114, "Ошибка разбора цепочки"), // Ошибка с кодом 114 и сообщением
+		ERROR_ENTRY(115, "Индекс строки больше размера контейнера"), // Ошибка с кодом 115 и сообщением
+		ERROR_ENTRY(116, "Файл не существует"), // Ошибка с кодом 116 и сообщением
+		ERROR_ENTRY(117, "Ошибка разбора входной строки"), // Ошибка с кодом 117 и сообщением
+		ERROR_ENTRY_NODEF(118), // Неопределенная ошибка с кодом 118
+		ERROR_ENTRY_NODEF(119), // Неопределенная ошибка с кодом 119
+		ERROR_ENTRY_NODEF10(120), // Неопределенная ошибка с кодом 120
+		ERROR_ENTRY_NODEF10(130), // Неопределенная ошибка с кодом 130
+		ERROR_ENTRY_NODEF10(140), // Неопределенная ошибка с кодом 140
+		ERROR_ENTRY_NODEF10(150), // Неопределенная ошибка с кодом 150
+		ERROR_ENTRY_NODEF10(160), // Неопределенная ошибка с кодом 160
+		ERROR_ENTRY_NODEF10(170), // Неопределенная ошибка с кодом 170
+		ERROR_ENTRY_NODEF10(180), // Неопределенная ошибка с кодом 180
+		ERROR_ENTRY_NODEF10(190), // Неопределенная ошибка с кодом 190
+		ERROR_ENTRY_NODEF100(200), // Неопределенная ошибка с кодом 200
+		ERROR_ENTRY_NODEF100(300), // Неопределенная ошибка с кодом 300
+		ERROR_ENTRY_NODEF100(400), // Неопределенная ошибка с кодом 400
+		ERROR_ENTRY_NODEF100(500), // Неопределенная ошибка с кодом 500
+		ERROR_ENTRY_NODEF100(600), // Неопределенная ошибка с кодом 600
+		ERROR_ENTRY_NODEF100(700), // Неопределенная ошибка с кодом 700
+		ERROR_ENTRY_NODEF100(800), // Неопределенная ошибка с кодом 800
+		ERROR_ENTRY_NODEF100(900)  // Неопределенная ошибка с кодом 900
+	};
+
+	ERROR geterror(int id) { // Функция для получения ошибки по ID
+		if (id > 0 && id < ERROR_MAX_ENTRY) { // Проверка, что ID в допустимом диапазоне
+			return errors[id]; // Возврат соответствующей ошибки
+		}
+		else {
+			return errors[0]; // Возврат ошибки по умолчанию, если ID недействителен
+		}
+	}
+
+	ERROR geterrorin(int id, int line, int col, std::string buff, std::vector<std::string> MyVector) // Функция для получения ошибки с дополнительной информацией
+	{
+		if (id > 0 && id < ERROR_MAX_ENTRY) { // Проверка, что ID в допустимом диапазоне
+			errors[id].inext.col = col; // Установка колонки ошибки
+			errors[id].inext.line = line; // Установка строки ошибки
+			errors[id].inext.buff = buff; // Установка буфера ошибки
+			errors[id].inext.MyVector = MyVector; // Установка вектора дополнительных данных
+			return errors[id]; // Возврат соответствующей ошибки с дополнительной информацией
+		}
+		else {
+			return errors[0]; // Возврат ошибки по умолчанию, если ID недействителен
+		}
+	}
+
+	ERROR geterrorfst(int id, int line, std::string buff) // Функция для получения первой ошибки с дополнительной информацией
+	{
+		if (id > 0 && id < ERROR_MAX_ENTRY) { // Проверка, что ID в допустимом диапазоне
+			errors[id].inext.fstline = line; // Установка первой строки ошибки
+			errors[id].inext.buff = buff; // Установка буфера ошибки
+			return errors[id]; // Возврат соответствующей ошибки с дополнительной информацией
+		}
+		else {
+			return errors[0]; // Возврат ошибки по умолчанию, если ID недействителен
+		}
+	}
+
+} // Конец пространства имен Error
+
+Parm.h
+----------------
+#pragma once
+
+#define PARM_IN L"-in:" // Параметр для имени файла ввода
+#define PARM_OUT L"-out:" // Параметр для имени файла вывода
+#define PARM_LOG L"-log:" // Параметр для имени файла журнала
+#define PARM_MAX_SIZE 300 // Максимальная длина строки параметра командной строки
+#define PARM_OUT_DEFAULT_EXT L".out" // Расширение файла вывода по умолчанию
+#define PARM_LOG_DEFAULT_EXT L".log" // Расширение файла журнала по умолчанию
+
+namespace Parm
+{
+    struct PARM
+    {
+        wchar_t in[PARM_MAX_SIZE]; // Имя файла ввода
+        wchar_t out[PARM_MAX_SIZE]; // Имя файла вывода
+        wchar_t log[PARM_MAX_SIZE]; // Имя файла журнала
+    };
+
+    PARM getparm(int argc, wchar_t* argv[]); // Получение структуры PARM из параметров командной строки
+};
+
+
+Parm.cpp
+-------------------
+#include "stdafx.h"
+#include "Parm.h"
+#include "Error.h"
+
+namespace Parm
+{
+
+	PARM getparm(int argc, wchar_t* argv[])
+	{
+		PARM result;
+		bool isOut = false, isLog = false;
+
+		if (argc < 2) { throw ERROR_THROW(100); }
+		for (int i = 0; i < argc; i++)
+		{
+			/*Функция wcsstr является частью стандартной библиотеки C/C++ и используется для поиска первого вхождения одной широкой подстроки
+			(строки типа wchar_t) в другой широкой строке.
+			Она возвращает указатель на начало найденной подстроки или nullptr, если подстрока не найдена.*/
+
+			if (wcslen(argv[i]) > PARM_MAX_SIZE + 3)
+			{
+				throw ERROR_THROW(104);
+			}
+			if (wcsstr(argv[i], PARM_IN) != nullptr)
+			{
+				/*функция wcscpy_s является частью стандартной библиотеки C/C++ и используется для копирования содержимого одной широкой строки
+				(строки типа wchar_t) в другую. Протитип: errno_t wcscpy_s(wchar_t* dest, size_t destSize, const wchar_t* src);
+				Параметры:
+				dest: Указатель на целевую строку, в которую будет скопировано содержимое.
+				destSize: Максимальный размер dest в символах.
+				src: Указатель на строку-источник, которую нужно скопировать.*/
+				wcscpy_s(result.in, argv[i] + wcslen(PARM_IN));
+			}
+
+			if (wcsstr(argv[i], PARM_OUT) != nullptr)
+			{
+				isOut = true;
+				wcscpy_s(result.out, argv[i] + wcslen(PARM_OUT));
+			}
+
+			if (wcsstr(argv[i], PARM_LOG) != nullptr)
+			{
+				isLog = true;
+				wcscpy_s(result.log, argv[i] + wcslen(PARM_LOG));
+			}
+		}
+		if (!isOut)
+		{
+			wcscpy_s(result.out, result.in);
+			wcscat_s(result.out, PARM_OUT_DEFAULT_EXT);
+		}
+		if (!isLog)
+		{
+			wcscpy_s(result.log, result.in);
+			wcscat_s(result.log, PARM_LOG_DEFAULT_EXT);
+		}
+
+		return result;
+	}
+}
+
+In.h
+-----------------
+#pragma once
+#define IN_MAX_LEN_TEXT 512*512
+#define IN_CODE_ENDL 10
+#define IN_CODE_TABLE {\
+	IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, '|', IN::F, IN::F, IN::F, IN::F, IN::F,\
+	IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F,\
+	IN::T, IN::F, IN::F, IN::F, IN::F, IN::F, IN::F, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::F, IN::T,\
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::F, IN::T, IN::F, IN::F, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	\
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	'-', IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::I, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, \
+	IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T, IN::T  \
+}
+//|-                       
+//- A
+namespace In
+{
+	struct IN
+	{
+		enum { T = 1024, F = 2048, I = 4096 };//T -         , I - ignor, F -         
+		int size = 0; //                     
+		int lines = 0; //                
+		int ignor = 0; //                                     
+		std::vector<std::string> text; //             
+		int code[256] = IN_CODE_TABLE;
+		bool flag = true;
+
+
+	};
+
+	IN getin(wchar_t infile[]);
+
+
+}
+
+In.cpp
+----------------
+#include "stdafx.h"
+using namespace std;
+
+namespace In
+{
+    void removeExtraSpaces(std::string& input)// Удаляем лишние пробелы из текущей строки.
+    {
+        bool insideQuotes = false; // Переменная для отслеживания, находимся ли мы внутри кавычек.
+
+        for (size_t i = 0; i < input.length(); ++i) // Проходим по всем символам строки.
+        {
+            if (input[i] == '\'')
+            {
+                insideQuotes = !insideQuotes; // Если встретили одиночную кавычку, переключаем флаг.
+            }
+            if (!insideQuotes && input[i] == ' ') // Если это пробел и мы не внутри кавычек.
+            {
+                if (i == 0 || i == input.length() - 1) // Проверяем, не первый ли это или последний символ строки.
+                {
+                    input.erase(i, 1); // Удаляем пробел, если он в начале или в конце строки.
+                }
+                size_t spacesToRemove = 0; // Счётчик последовательных пробелов.
+                while (i + spacesToRemove < input.length() && input[i + spacesToRemove] == ' ')
+                {
+                    ++spacesToRemove; // Подсчет количества последовательных пробелов после текущего символа.
+                }
+                if (spacesToRemove > 1) // Если больше одного пробела.
+                {
+                    input.erase(i + 1, spacesToRemove - 1); // Удаляем все лишние пробелы, кроме одного.
+                }
+            }
+        }
+    }
+
+    void removeSpacesAroundOperators(std::string& input)// Удаляем пробелы вокруг операторов из текущей строки.
+    {
+        const std::string operators = ";,}{()=+-/*"; // Строка, содержащая все операторы, вокруг которых нужно убрать пробелы.
+
+        for (size_t i = 0; i < input.length(); ++i) // Проходим по символам строки.
+        {
+            if (operators.find(input[i]) != std::string::npos) // Если текущий символ является оператором.
+            {
+                // Удаляем пробелы перед символом
+                while (i > 0 && std::isspace(input[i - 1]))
+                {
+                    input.erase(i - 1, 1); // Удаляем пробел перед оператором.
+                    --i; // Смещаем индекс назад, чтобы продолжить проверку.
+                }
+
+                // Удаляем пробелы после символа
+                while (i + 1 < input.length() && std::isspace(input[i + 1]))
+                {
+                    input.erase(i + 1, 1); // Удаляем пробел после оператора.
+                }
+            }
+        }
+    }
+
+    IN getin(wchar_t infile[]) // Функция для чтения данных из файла и их обработки.
+    {
+        ifstream fin; // Создаем поток для чтения файла.
+        char* outFile = new char[wcslen(infile) + 1]; // Создаем буфер для имени файла в формате char.
+        wcstombs_s(NULL, outFile, wcslen(infile) + 1, infile, wcslen(infile) + 1); // Преобразуем имя файла из wchar_t в char.
+        fin.open(infile); // Открываем файл для чтения.
+        if (fin.bad()) // Проверяем, не произошло ли ошибки при открытии файла.
+        {
+            throw ERROR_THROW(116); // Если ошибка, выбрасываем исключение.
+        }
+        if (!fin.is_open()) // Если файл не открылся.
+        {
+            throw ERROR_THROW(110); // Выбрасываем исключение.
+        }
+
+        IN resultIn; // Создаем структуру для хранения данных из файла.
+        resultIn.size = 0; // Инициализируем начальный размер текста.
+        resultIn.lines = 0; // Инициализируем количество строк.
+        int position = 0; // Переменная для отслеживания позиции в строке.
+        int ch; // Переменная для хранения текущего символа.
+        std::string currentLine; // Строка для накопления символов.
+        std::string buffer; // Буфер для считывания строк из файла.
+
+        while (std::getline(fin, buffer)) // Считываем строку из файла.
+        {
+            resultIn.lines++; // Увеличиваем количество строк.
+            for (int i = 0; i < buffer.length(); i++) // Проходим по символам считанной строки.
+            {
+                ch = buffer[i]; // Получаем текущий символ.
+
+                if (ch == fin.eof()) // Если достигли конца файла.
+                {
+                    break; // Выходим из цикла.
+                }
+
+                switch (resultIn.code[(unsigned char)ch]) // Анализ символа с помощью таблицы resultIn.code.
+                {
+                case IN::F: // Если символ является буквой, цифрой или знаком подчеркивания, то это идентификатор.
+                {
+                    resultIn.text.push_back(currentLine); // Добавляем текущую строку в результат.
+                    throw ERROR_THROW_IN(111, resultIn.lines, ++position, buffer, resultIn.text); // Выбрасываем исключение при ошибке.
+                    break;
+                }
+                case IN::I: // Если символ игнорируется.
+                {
+                    resultIn.ignor++; // Увеличиваем счетчик игнорируемых символов.
+                    position++; // Увеличиваем позицию символа в текущей строке.
+                    break;
+                }
+                case IN::T: // Если символ является текстовым символом.
+                {
+                    currentLine += ch; // Добавляем символ к текущей строке.
+                    position++; // Увеличиваем позицию символа в строке.
+                    resultIn.size++; // Увеличиваем размер текста.
+                    break;
+                }
+                default: // Если символ не попадает ни в одну из категорий.
+                {
+                    currentLine += resultIn.code[(unsigned char)ch]; // Добавляем специальный символ.
+                    resultIn.size++; // Увеличиваем размер текста.
+                    position++; // Увеличиваем позицию символа.
+                    break;
+                }
+                }
+            }
+
+            if (!currentLine.empty()) // Если текущая строка не пустая.
+            {
+                resultIn.size++; // Увеличиваем размер текста.
+                position++; // Увеличиваем позицию символа.
+                position = 0; // Сбрасываем позицию после окончания строки.
+                currentLine += resultIn.code[IN_CODE_ENDL]; // Добавляем символ конца строки.
+                removeExtraSpaces(currentLine); // Удаляем лишние пробелы в строке.
+                removeSpacesAroundOperators(currentLine); // Удаляем пробелы вокруг операторов.
+                resultIn.text.push_back(currentLine); // Добавляем текущую строку в результат.
+                currentLine.clear(); // Очищаем строку для следующей итерации.
+            }
+        }
+
+        fin.close();
+        return resultIn;
+    }
+}
+
+Log.h
+-------------------
+#pragma once
+#include<fstream>
+#include "stdafx.h"
+
+namespace Log
+{
+	struct LOG
+	{
+		wchar_t logfile[PARM_MAX_SIZE];
+		std::ofstream* stream;
+	};
+	static const LOG INITLOG{ L"", NULL };
+	LOG getlog(wchar_t logfile[]);
+	void WriteLine(LOG log, char* c, ...);
+	void WriteLine(LOG log, wchar_t* c, ...);
+	void WriteLog(LOG log);
+	void WriteParm(LOG log, Parm::PARM parm);
+	void WriteIn(LOG log, In::IN in);
+	void WriteError(LOG log, Error::ERROR error);
+	void Close(LOG log);
+	void WriteLexTable(LOG log, LT::LexTable& lextable);
+}
+
+Log.cpp
+--------------
+#include "stdafx.h"
+#include "Log.h" 
+#include <iostream> 
+#include <ctime> 
+
+namespace Log
+{
+	// Функция для получения структуры LOG и открытия файла для записи
+	LOG getlog(wchar_t logfile[])
+	{
+		LOG temp; // Создаем временную структуру LOG
+		char* outFile = new char[wcslen(logfile) + 1]; // Выделяем память для имени файла
+		wcstombs_s(NULL, outFile, wcslen(logfile) + 1, logfile, wcslen(logfile) + 1); // Преобразуем имя файла из wchar_t в char
+		temp.stream = new std::ofstream; // Создаем новый поток для записи в файл
+		temp.stream->open(outFile); // Открываем файл для записи
+		if (!temp.stream->is_open()) // Если файл не открыт
+		{
+			ERROR_THROW(112); // Генерируем ошибку с кодом 112
+		}
+		wcscpy_s(temp.logfile, logfile); // Копируем имя файла в структуру LOG
+		return temp; // Возвращаем структуру LOG
+	};
+
+	// Функция для записи строки в лог, принимающая строку в формате char
+	void WriteLine(LOG log, char* c, ...)
+	{
+		char** p = &c; // Указатель на строку
+
+		while (*p != "") // Пока строка не пустая
+		{
+
+			(*log.stream) << *p; // Записываем строку в лог
+			p += 1; // Переходим к следующей строке
+		}
+	};
+
+	// Функция для записи строки в лог, принимающая строку в формате wchar_t
+	void WriteLine(LOG log, wchar_t* c, ...)
+	{
+		wchar_t** p = &c; // Указатель на строку
+		char buffer[50]; // Буфер для преобразования строки
+
+		while (*p != L"") // Пока строка не пустая
+		{
+			wcstombs(buffer, *p, sizeof(buffer)); // Преобразуем строку из wchar_t в char
+			(*log.stream) << buffer; // Записываем строку в лог
+			p += 1; // Переходим к следующей строке
+		}
+	};
+
+	// Функция для записи времени и заголовка лога
+	void WriteLog(LOG log)
+	{
+		char buffer[PARM_MAX_SIZE]; // Буфер для хранения времени
+
+		time_t rawtime; // Переменная для хранения текущего времени
+		struct tm* timeinfo; // Структура для хранения времени в формате человеко-читаемого вида
+
+		time(&rawtime); // Получаем текущее время
+		timeinfo = localtime(&rawtime); // Преобразуем время в локальное время
+
+		strftime(buffer, PARM_MAX_SIZE, "%d.%m.%Y %H:%M:%S", timeinfo); // Преобразуем время в строковый формат
+		(*log.stream) << "\n--— Протокол —— \n" << buffer << " —— \n"; // Записываем время и заголовок в лог
+	};
+
+	// Функция для записи параметров, переданных через структуру Parm::PARM
+	void WriteParm(LOG log, Parm::PARM parm)
+	{
+		char inInfo[PARM_MAX_SIZE]; // Буфер для входного файла
+		char outInfo[PARM_MAX_SIZE]; // Буфер для выходного файла
+		char logInfo[PARM_MAX_SIZE]; // Буфер для лог-файла
+
+		wcstombs(inInfo, parm.in, sizeof(inInfo)); // Преобразуем входной файл из wchar_t в char
+		wcstombs(outInfo, parm.out, sizeof(outInfo)); // Преобразуем выходной файл из wchar_t в char
+		wcstombs(logInfo, parm.log, sizeof(logInfo)); // Преобразуем лог-файл из wchar_t в char
+
+		(*log.stream) << "--— Аргументы —— \n" // Записываем аргументы в лог
+			<< " -in: " << inInfo << "\n" // Записываем входной файл
+			<< " -out: " << outInfo << "\n" // Записываем выходной файл
+			<< " -log: " << logInfo << "\n"; // Записываем лог-файл
+	};
+
+	// Функция для записи информации о входных данных, переданных через структуру In::IN
+	void WriteIn(LOG log, In::IN in)
+	{
+		(*log.stream) << "--— Параметры —— \n" // Заголовок раздела с параметрами
+			<< "Количество символов: " << in.size << "\n" // Записываем количество символов
+			<< "Строк: " << in.lines << "\n" // Записываем количество строк
+			<< "Пропущено: " << in.ignor << "\n"; // Записываем количество пропущенных символов
+	};
+
+	// Функция для записи ошибки, переданной через структуру Error::ERROR
+	void WriteError(LOG log, Error::ERROR error)
+	{
+		if (error.inext.line != -1) // Если строка ошибки известна
+		{
+			*log.stream << "Ошибка в строке:\t" << error.inext.buff << std::endl; // Записываем строку с ошибкой
+			*log.stream << "Строка: " << error.inext.line << " Позиция: " << error.inext.col << std::endl; // Записываем строку и позицию ошибки
+		}
+		*log.stream << "Ошибка: " << error.id << ":" << error.message << std::endl; // Записываем код и сообщение об ошибке
+	}
+
+	// Функция для закрытия лог-файла
+	void Close(LOG log)
+	{
+		log.stream->close(); // Закрываем файл
+	}
+
+	// Функция для записи таблицы лексем, переданной через структуру LT::LexTable
+	void WriteLexTable(LOG log, LT::LexTable& lextable)
+	{
+		int currentLine = 0;  // Инициализируем переменную для хранения текущей строки
+		bool currentLineChange = true;
+		*log.stream << "\n\nТаблица Лексем:\n"; // Заголовок таблицы лексем
+		for (int i = 0; i < lextable.size; i++) // Цикл по лексемам
+		{
+			if (lextable.table[i].sn != currentLine) // Если строка лексемы изменилась
+			{
+				*log.stream << '\n';  // Делаем перенос строки
+				currentLine = lextable.table[i].sn; // Обновляем текущую строку
+				currentLineChange = true;
+			}
+			if (currentLine + 1 < 10 && currentLineChange == true) {
+				*log.stream << "0" << currentLine + 1 << ' ';
+				currentLineChange = false;
+			}
+			else if (currentLineChange == true) {
+				*log.stream << currentLine + 1 << ' ';
+				currentLineChange = false;
+			}
+			*log.stream << lextable.table[i].lexema; // Записываем лексему в лог
+		}
+	}
+
+};
+
+
+Out.h
+#pragma once
+#include "stdafx.h"
+
+namespace Out
+{
+	struct OUT
+	{
+		wchar_t outfile[PARM_MAX_SIZE];
+		std::ofstream* stream;
+	};
+
+	static const OUT INITOUT{ L"", NULL };
+	OUT getout(wchar_t outfile[]);
+	void WriteOut(In::IN in, wchar_t out[]);
+	void WriteError(OUT out, Error::ERROR error);
+	void Close(OUT out);
+};
+
+Out.cpp
+----------------
+#include "stdafx.h" 
+using namespace std;
+
+namespace Out
+{
+
+	OUT getout(wchar_t outfile[])
+	{
+		OUT temp; // Создаем временную структуру OUT
+		char* outFile = new char[wcslen(outfile) + 1]; // Выделяем память для имени файла в формате char
+		wcstombs_s(NULL, outFile, wcslen(outfile) + 1, outfile, wcslen(outfile) + 1); // Преобразуем имя файла из wchar_t в char
+		temp.stream = new std::ofstream; // Создаем новый поток для записи в файл
+		temp.stream->open(outFile); // Открываем файл для записи
+		if (!temp.stream->is_open()) // Если файл не открыт
+		{
+			ERROR_THROW(113); // Генерируем ошибку с кодом 113
+		}
+		wcscpy_s(temp.outfile, outfile); // Копируем имя файла в структуру OUT
+		return temp; // Возвращаем структуру OUT
+	};
+
+	// Функция для записи содержимого в выходной файл
+	void WriteOut(In::IN in, wchar_t out[])
+	{
+		std::ofstream fout(out); // Открываем выходной файл для записи
+		for (int i = 0; i < in.text.size(); i++) // Цикл по всему тексту
+		{
+			fout << in.text[i]; // Записываем каждый символ в файл
+		}
+	};
+
+	// Функция для записи информации об ошибке в выходной файл
+	void WriteError(OUT out, Error::ERROR error)
+	{
+		for (int i = 0; i < error.inext.MyVector.size(); i++) // Цикл по элементам вектора с информацией об ошибке
+		{
+			*out.stream << error.inext.MyVector[i]; // Записываем каждый элемент в файл
+		}
+		*out.stream << endl; // Переход на новую строку
+		*out.stream << "Ошибка" << error.id << ": " << error.message << endl << endl; // Записываем код и сообщение об ошибке
+		*out.stream << "строка:" << error.inext.line << " позиция:" << error.inext.col << endl << endl; // Записываем строку и позицию ошибки
+		if (error.inext.line != -1 && error.inext.col != -1) // Если строка и позиция ошибки известны
+		{
+			*out.stream << "Ошибка в строке " << ": " << error.inext.buff << endl << endl; // Записываем строку с ошибкой
+		}
+	}
+
+	// Функция для закрытия выходного файла
+	void Close(OUT out)
+	{
+		out.stream->close(); // Закрываем файл
+	}
+}
+
+
+FST.h
+#pragma once
+
+#include "stdafx.h"
+namespace FST
+{
+	struct RELATION // Ребро: символ -> вершина графа КА
+	{
+		char symbol; // Символ перехода
+		short nnode; // Смежная вершина
+
+		RELATION(
+			unsigned char c = 'a', // Символ перехода
+			short nn = 0 // Новое состояние
+		);
+	};
+
+
+	struct NODE // Вершина графа переходов
+	{
+		short n_relation; // Количество инцидентных рёбер
+		RELATION* relations;
+
+		NODE();
+		NODE(short n, RELATION rel, ...);
+	};
+
+	struct FST // Недетерминированный КА
+	{
+		std::string string; // Цепочка (строка)
+		short position; // Текущая позиция в цепочке
+		short nstates; // Количество состояний автомата
+		NODE* nodes; // Граф переходов [0] - начальное, [nstate-1] - конечное
+		short* rstates; // Возможные состояния автомата на данной позиции
+
+		FST(
+			std::string s, // Цепочка (строка)
+			short ns, // Количество состояний автомата
+			NODE n, ... // Граф переходов [0] - начальное, [nstate-1] - конечное
+		);
+	};
+
+	bool execute(FST& fst);
+	void WriteError(Error::ERROR e);
+
+}
+
+
+FST.cpp
+------------------
+#include "stdafx.h" 
+
+namespace FST
+{
+    // Конструктор класса RELATION, инициализирует символ и номер следующего узла
+    RELATION::RELATION(unsigned char c, short nn)
+    {
+        symbol = c; // Устанавливаем символ
+        nnode = nn; // Устанавливаем номер следующего узла
+    }
+
+    // Конструктор по умолчанию для класса NODE, инициализирует количество отношений и указатель на массив отношений
+    NODE::NODE()
+    {
+        n_relation = 0; // Инициализация количества отношений нулем
+        relations = nullptr; // Указатель на отношения пустой
+    }
+
+    // Конструктор для класса NODE с параметрами: количество отношений, первый элемент отношений и дополнительные отношения
+    NODE::NODE(short n, RELATION rel, ...)
+    {
+        n_relation = n; // Устанавливаем количество отношений
+        RELATION* p = &rel; // Получаем указатель на первый элемент отношений
+        relations = new RELATION[n]; // Выделяем память под массив отношений
+        for (short i = 0; i < n; i++) // Цикл для копирования всех отношений
+        {
+            relations[i] = p[i]; // Копируем каждый элемент отношений в массив
+        }
+    }
+
+    // Конструктор для класса FST с параметрами: входная строка, количество состояний и первый узел
+    FST::FST(std::string s, short ns, NODE n, ...)
+    {
+        string = s; // Устанавливаем входную строку
+        nstates = ns; // Устанавливаем количество состояний
+        nodes = new NODE[ns]; // Выделяем память под массив узлов
+        NODE* p = &n; // Получаем указатель на первый узел
+        for (int k = 0; k < ns; k++) // Цикл для копирования всех узлов
+        {
+            nodes[k] = p[k]; // Копируем каждый узел в массив узлов
+        }
+        rstates = new short[nstates]; // Выделяем память под массив состояний
+        memset(rstates, 0xff, sizeof(short) * nstates); // Заполняем массив состояний значениями 0xff
+        rstates[0] = 0; // Устанавливаем начальное состояние
+        position = -1; // Устанавливаем начальную позицию
+    }
+
+    // Функция для выполнения одного шага автомата
+    bool step(FST& fst, short*& rstates)
+    {
+        bool rc = false; // Переменная для хранения результата
+        std::swap(rstates, fst.rstates); // Меняем местами временные состояния и состояния автомата
+        for (short i = 0; i < fst.nstates; i++) // Цикл по состояниям
+        {
+            if (rstates[i] == fst.position) // Проверяем, находится ли текущее состояние в нужной позиции
+                for (short j = 0; j < fst.nodes[i].n_relation; j++) // Цикл по всем отношениям узла
+                {
+                    if (fst.nodes[i].relations[j].symbol == fst.string[fst.position]) // Если символ совпадает с символом во входной строке
+                    {
+                        fst.rstates[fst.nodes[i].relations[j].nnode] = fst.position + 1; // Переходим к следующему состоянию
+                        rc = true; // Обновляем флаг, что шаг выполнен успешно
+                    }
+                }
+        }
+        return rc; // Возвращаем результат
+    }
+
+    // Функция для выполнения автомата
+    bool execute(FST& fst)
+    {
+        short* rstates = new short[fst.nstates]; // Выделяем память под временные состояния
+        memset(rstates, 0xff, sizeof(short) * fst.nstates); // Заполняем временные состояния значениями 0xff
+        short lstring = fst.string.length(); // Получаем длину входной строки
+        bool rc = true; // Переменная для хранения результата
+        for (short i = 0; i < lstring && rc; i++) // Цикл по символам строки, пока не конец строки или не найдено несоответствие
+        {
+            fst.position++; // Увеличиваем позицию
+            rc = step(fst, rstates); // Выполняем шаг автомата
+        }
+        fst.rstates[0] = 0; // Восстанавливаем начальное состояние
+        //delete[] rstates; // Комментарий: можно освободить память
+        return (rc ? (fst.rstates[fst.nstates - 1] == lstring) : rc); // Возвращаем true, если последний элемент состояний равен длине строки
+    }
+
+    // Функция для вывода ошибки
+    void WriteError(Error::ERROR e)
+    {
+        std::cout << "Ошибка разбора строки" << std::endl; // Сообщение об ошибке
+        std::cout << "Ошибка разбора в строке: " << e.inext.buff << std::endl; // Вывод строки, в которой произошла ошибка
+        std::cout << "Позиция: " << e.inext.fstline + 1; // Вывод позиции ошибки
+    }
+}
+
+IT.h
+-----------------
+#pragma once
+#define ID_MAXSIZE 5
+#define TI_MAXSIZE 4096
+#define TI_INT_DEFAULT 0
+#define TI_STR_DEFAULT ""
+#define TI_NULLIDX 0xffffffff
+#define TI_STR_MAXSIZE 255
+namespace IT
+{
+    enum IDDATATYPE { INT = 1, STR = 2 }; // Перечисление для типов данных: INT (целое число) и STR (строка)
+    enum IDTYPE { V = 1, F = 2, P = 3, L = 4 }; // Перечисление для типов идентификаторов: V (переменная), F (функция), P (параметр), L (локальная переменная)
+
+    struct Entry // Структура для представления записи в таблице идентификаторов
+    {
+        int idxfirstLE; // Индекс первой записи в таблице лексем, связанной с этим идентификатором
+        std::string id; // Идентификатор (ограниченный по размеру)
+        std::string fun; // Название функции, к которой относится идентификатор (ограниченное по размеру)
+        IDDATATYPE iddatatype; // Тип данных идентификатора (INT или STR)
+        IDTYPE idtype; // Тип идентификатора (переменная, функция, параметр, локальная переменная)
+        std::string functionname; // Название функции (ограниченное по размеру)
+        char operation[256]; // Операция (например, "+", "-" для параметров функций)
+        struct
+        {
+            int vint;
+            std::string vstr;
+            int len;
+
+            void setInteger(int value) {
+                vint = value;
+            }
+
+            void setString(std::string value) {
+                vstr = value;
+                len = value.length();
+            }
+        }value;
+    };
+
+    struct IdTable
+    {
+        int maxsize; // Максимальный размер таблицы
+        int size; // Текущий размер таблицы
+        Entry* table; // Массив записей таблицы идентификаторов
+    };
+
+    IdTable Create(int size); // Создать таблицу идентификаторов
+    void Add(IdTable& idtable, Entry entry); // Добавить запись в таблицу идентификаторов
+    Entry GetEntry(IdTable& idtable, int n); // Получить запись из таблицы идентификаторов по индексу
+    int IsId(IdTable& idtable, std::string word, std::string functionName, std::string function); // Проверить, является ли идентификатор частью таблицы
+    void Delete(IdTable& idtable); // Удалить таблицу идентификаторов
+    int findLexInteger(IdTable& idtable, int word);
+    int findLexStr(IdTable& idtable, std::string word);
+};
+
+
+IT.cpp
+---------------
+#include "stdafx.h"
+
+namespace IT
+{
+    // Создать новую таблицу идентификаторов заданного размера
+    IdTable Create(int size)
+    {
+        if (size >= TI_MAXSIZE)
+        {
+            throw ERROR_THROW(3); // Вызвать ошибку с кодом 3, если размер таблицы слишком большой
+        }
+
+        IdTable idtable;
+        idtable.maxsize = size; // Установить максимальный размер таблицы
+        idtable.size = 0; // Установить текущий размер таблицы
+        idtable.table = new Entry[size]; // Выделить память под таблицу
+
+        return idtable; // Вернуть созданную таблицу
+    }
+
+    // Добавить запись (Entry) в таблицу идентификаторов
+    void Add(IdTable& idtable, Entry entry)
+    {
+        if (idtable.size >= idtable.maxsize)
+        {
+            throw ERROR_THROW(106); // Вызвать ошибку с кодом 106, если таблица заполнена
+        }
+
+        idtable.table[idtable.size] = entry; // Добавить запись в таблицу
+        idtable.size++; // Увеличить текущий размер таблицы
+    }
+
+    // Получить запись (Entry) из таблицы идентификаторов по индексу
+    Entry GetEntry(IdTable& idtable, int n)
+    {
+        if (n < 0 || n >= idtable.size)
+        {
+            throw ERROR_THROW(15); // Вызвать ошибку с кодом 15, если индекс выходит за пределы таблицы
+        }
+        return idtable.table[n]; // Вернуть запись по указанному индексу
+    }
+
+    // Удалить таблицу идентификаторов и освободить память
+    void Delete(IdTable& idtable)
+    {
+        delete[] idtable.table; // Освободить память, занятую таблицей
+        idtable.size = 0; // Установить текущий размер и максимальный размер таблицы в ноль
+        idtable.maxsize = 0;
+    }
+
+    // Поиск идентификатора в таблице с заданным именем и контекстом функции
+    int IsId(IdTable& idtable, std::string id, std::string functionName, std::string function)
+    {
+        for (int n = idtable.size; n >= 0; n--)
+        {
+            if (idtable.table[n].id == id && (idtable.table[n].fun == function || idtable.table[n].functionname == functionName))
+            {
+                return n; // Вернуть индекс, если идентификатор найден в контексте функции
+            }
+        }
+        return TI_NULLIDX; // Вернуть специальное значение, если идентификатор не найден
+    }
+
+    // Поиск целочисленного значения в таблице идентификаторов
+    int findLexInteger(IdTable& idtable, int word)
+    {
+        for (int n = idtable.size; n >= 0; n--)
+        {
+            if (idtable.table[n].value.vint == word)
+            {
+                return n; // Вернуть индекс, если целочисленное значение найдено
+            }
+        }
+        return TI_NULLIDX; // Вернуть специальное значение, если целочисленное значение не найдено
+    }
+
+    // Поиск строкового значения в таблице идентификаторов
+    int findLexStr(IdTable& idtable, std::string word)
+    {
+        for (int n = idtable.size; n >= 0; n--)
+        {
+            if (idtable.table[n].value.vstr == word)
+            {
+                return n; // Вернуть индекс, если строковое значение найдено
+            }
+        }
+        return TI_NULLIDX; // Вернуть специальное значение, если строковое значение не найдено
+    }
+};
+
+LT.h
+----------------
+#pragma once
+
+#define LEXEMA_FIXSIZE 1	// Фиксированный размер лексемы
+#define LT_MAXSIZE 4096		// Максимальный размер таблицы лексем
+#define LT_TI_NULLIDX 0xffffffff	// Нет записи в таблице идентификаторов
+#define LEX_INTEGER		't'	// Лексема для целых чисел
+#define LEX_STRING		't'	// Лексема для строк
+#define LEX_LITERAL		'l'	// Лексема для литералов
+#define LEX_ID			'i'	// Лексема для идентификаторов
+#define LEX_FUNCTION	'f'	// Лексема для функций
+#define LEX_MAINFUNC	'm'	// Лексема для главной функции
+#define LEX_DECLARE		'd'	// Лексема для объявлений
+#define LEX_RETURN		'r'	// Ключевое слово return
+#define LEX_PRINT		'p'	// Ключевое слово print
+#define LEX_SEMICOLON	';'	// ;
+#define LEX_COMMA		','	// ,
+#define LEX_LEFTBRACE	'{'	// {
+#define LEX_RIGHTBRACE	'}'	// }
+#define LEX_LEFTHESIS	'('	// (
+#define LEX_RIGHTHESIS	')'	// )
+#define LEX_PLUS		'v'	// +
+#define LEX_MINUS		'v'	// -
+#define LEX_STAR		'v'	// *
+#define LEX_DIRSLASH	'v'	// /
+#define LEX_RAV			'='	// =
+#define LIB_FUNCTION1 "substr"
+#define LIB_FUNCTION2 "strlen"
+
+
+namespace LT	// Пространство имен для таблицы лексем
+{
+	struct Entry	// Структура для представления записи в таблице лексем
+	{
+		unsigned char lexema;	/// Лексема
+		int sn;			/// Номер строки в исходном коде
+		int idxTI;		/// Индекс в таблице идентификаторов или LT_TI_NULLIDX
+		std::string comm{};
+	};
+
+	struct LexTable		// Структура для таблицы лексем
+	{
+		int maxsize;	/// Максимальный размер таблицы < LT_MAXSIZE
+		int size;		/// Текущий размер таблицы < maxsize
+		Entry* table;	/// Массив записей таблицы лексем
+	};
+
+	LexTable Create( // Создать таблицу лексем
+		int size	/// Размер таблицы лексем < LT_MAXSIZE
+	);
+	void Add(				// Добавить запись в таблицу лексем
+		LexTable& lextable, /// Ссылка на таблицу лексем
+		Entry entry			/// Запись для добавления
+	);
+
+	Entry GetEntry(			// Получить запись из таблицы лексем по индексу
+		LexTable& lextable,	/// Ссылка на таблицу лексем
+		int n				/// Индекс записи
+	);
+
+	void Delete(LexTable& lextable); // Удалить таблицу лексем (освободить память)
+};
+
+LT.cpp
+----------------
+#include "stdafx.h"
+
+namespace LT
+{
+    // Создать таблицу лексем заданного размера
+    LexTable Create(int size)
+    {
+        LexTable* tabl = new LexTable;
+
+        // Проверить, не превышено ли максимальное количество лексем в таблице
+        if (size > LT_MAXSIZE)
+        {
+            throw ERROR_THROW(2); // Вызвать ошибку с кодом 2, если превышено максимальное количество лексем (> 4096)
+        }
+
+        tabl->maxsize = size; // Установить максимальный размер таблицы
+        tabl->size = 0; // Установить текущий размер таблицы
+        tabl->table = new Entry[size]; // Создать новую запись в таблице
+
+        return *tabl; // Вернуть созданную таблицу
+    }
+
+    // Добавить запись в таблицу лексем
+    void Add(LexTable& lextable, Entry entry)
+    {
+        // Проверить, не превышено ли максимальное количество лексем в таблице
+        if (lextable.size + 1 > lextable.maxsize)
+        {
+            throw ERROR_THROW(114); // Вызвать ошибку с кодом 114, если превышено максимальное количество лексем в таблице
+        }
+
+        lextable.table[lextable.size] = entry; // Добавить запись в таблицу
+        lextable.size += 1; // Увеличить текущий размер таблицы
+    }
+
+    // Получить запись из таблицы лексем по индексу
+    Entry GetEntry(LexTable& lextable, int n)
+    {
+        return lextable.table[n]; // Вернуть запись по указанному индексу
+    }
+
+    // Удалить таблицу лексем
+    void Delete(LexTable& lextable)
+    {
+        delete[] lextable.table; // Освободить память, занимаемую таблицей
+        //delete &lextable; // Возможно, эту строку можно удалить, так как она закомментирована и не выполняет никаких действий
+    }
+};
+
+Lexer.h
+------------------
+#pragma once
+#include "stdafx.h"
+
+namespace Lexer
+{
+	void parse(In::IN in, LT::LexTable& lextable, IT::IdTable& idtable);
+	bool check(std::string l, FST::FST fst);
+
+}
+
+Lexer.cpp
+-----------------
+#include "stdafx.h"
+namespace  Lexer
+{
+
+	FST::FST typeInteger("", 8,
+		FST::NODE(1, FST::RELATION('i', 1)),
+		FST::NODE(1, FST::RELATION('n', 2)),
+		FST::NODE(1, FST::RELATION('t', 3)),
+		FST::NODE(1, FST::RELATION('e', 4)),
+		FST::NODE(1, FST::RELATION('g', 5)),
+		FST::NODE(1, FST::RELATION('e', 6)),
+		FST::NODE(1, FST::RELATION('r', 7)),
+		FST::NODE()
+	);
+
+	FST::FST typeString("", 7,
+		FST::NODE(1, FST::RELATION('s', 1)),
+		FST::NODE(1, FST::RELATION('t', 2)),
+		FST::NODE(1, FST::RELATION('r', 3)),
+		FST::NODE(1, FST::RELATION('i', 4)),
+		FST::NODE(1, FST::RELATION('n', 5)),
+		FST::NODE(1, FST::RELATION('g', 6)),
+		FST::NODE()
+	);
+
+	FST::FST typeFunction("", 9,
+		FST::NODE(1, FST::RELATION('f', 1)),
+		FST::NODE(1, FST::RELATION('u', 2)),
+		FST::NODE(1, FST::RELATION('n', 3)),
+		FST::NODE(1, FST::RELATION('c', 4)),
+		FST::NODE(1, FST::RELATION('t', 5)),
+		FST::NODE(1, FST::RELATION('i', 6)),
+		FST::NODE(1, FST::RELATION('o', 7)),
+		FST::NODE(1, FST::RELATION('n', 8)),
+		FST::NODE()
+	);
+
+	FST::FST typeDeclare("", 8,
+		FST::NODE(1, FST::RELATION('d', 1)),
+		FST::NODE(1, FST::RELATION('e', 2)),
+		FST::NODE(1, FST::RELATION('c', 3)),
+		FST::NODE(1, FST::RELATION('l', 4)),
+		FST::NODE(1, FST::RELATION('a', 5)),
+		FST::NODE(1, FST::RELATION('r', 6)),
+		FST::NODE(1, FST::RELATION('e', 7)),
+		FST::NODE()
+	);
+
+	FST::FST typeReturn("", 7,
+		FST::NODE(1, FST::RELATION('r', 1)),
+		FST::NODE(1, FST::RELATION('e', 2)),
+		FST::NODE(1, FST::RELATION('t', 3)),
+		FST::NODE(1, FST::RELATION('u', 4)),
+		FST::NODE(1, FST::RELATION('r', 5)),
+		FST::NODE(1, FST::RELATION('n', 6)),
+		FST::NODE()
+	);
+
+	FST::FST typeMain("", 5,
+		FST::NODE(1, FST::RELATION('m', 1)),
+		FST::NODE(1, FST::RELATION('a', 2)),
+		FST::NODE(1, FST::RELATION('i', 3)),
+		FST::NODE(1, FST::RELATION('n', 4)),
+		FST::NODE()
+	);
+
+	FST::FST typePrint("", 6,
+		FST::NODE(1, FST::RELATION('p', 1)),
+		FST::NODE(1, FST::RELATION('r', 2)),
+		FST::NODE(1, FST::RELATION('i', 3)),
+		FST::NODE(1, FST::RELATION('n', 4)),
+		FST::NODE(1, FST::RELATION('t', 5)),
+		FST::NODE()
+	);
+
+	FST::FST typeSpace("", 2,
+		FST::NODE(1, FST::RELATION(' ', 1)),
+		FST::NODE()
+	);
+	FST::FST typeLeftBrace("", 2,
+		FST::NODE(1, FST::RELATION('{', 1)),
+		FST::NODE()
+	);
+	FST::FST typeRightBrace("", 2,
+		FST::NODE(1, FST::RELATION('}', 1)),
+		FST::NODE()
+	);
+	FST::FST typeLeftThesis("", 2,
+		FST::NODE(1, FST::RELATION('(', 1)),
+		FST::NODE()
+	);
+	FST::FST typeRightThesis("", 2,
+		FST::NODE(1, FST::RELATION(')', 1)),
+		FST::NODE()
+	);
+	FST::FST typeSemicolon("", 2,
+		FST::NODE(1, FST::RELATION(';', 1)),
+		FST::NODE()
+	);
+	FST::FST typeComma("", 2,
+		FST::NODE(1, FST::RELATION(',', 1)),
+		FST::NODE()
+	);
+	FST::FST typePlus("", 2,
+		FST::NODE(1, FST::RELATION('+', 1)),
+		FST::NODE());
+	FST::FST typeMinus("", 2,
+		FST::NODE(1, FST::RELATION('-', 1)),
+		FST::NODE());
+	FST::FST typeDel("", 2,
+		FST::NODE(1, FST::RELATION('/', 1)),
+		FST::NODE());
+	FST::FST typeMulti("", 2,
+		FST::NODE(1, FST::RELATION('*', 1)),
+		FST::NODE());
+	FST::FST typeEquals("", 2,
+		FST::NODE(1, FST::RELATION('=', 1)),
+		FST::NODE());
+	//                                  
+	FST::FST typeIdentificator("", 2,
+		FST::NODE(52,
+			FST::RELATION('a', 0), FST::RELATION('b', 0),
+			FST::RELATION('c', 0), FST::RELATION('d', 0),
+			FST::RELATION('e', 0), FST::RELATION('f', 0),
+			FST::RELATION('g', 0), FST::RELATION('h', 0),
+			FST::RELATION('i', 0), FST::RELATION('j', 0),
+			FST::RELATION('k', 0), FST::RELATION('l', 0),
+			FST::RELATION('m', 0), FST::RELATION('n', 0),
+			FST::RELATION('o', 0), FST::RELATION('p', 0),
+			FST::RELATION('q', 0), FST::RELATION('r', 0),
+			FST::RELATION('s', 0), FST::RELATION('t', 0),
+			FST::RELATION('u', 0), FST::RELATION('v', 0),
+			FST::RELATION('w', 0), FST::RELATION('x', 0),
+			FST::RELATION('y', 0), FST::RELATION('z', 0),
+
+			FST::RELATION('a', 1), FST::RELATION('b', 1),
+			FST::RELATION('c', 1), FST::RELATION('d', 1),
+			FST::RELATION('e', 1), FST::RELATION('f', 1),
+			FST::RELATION('g', 1), FST::RELATION('h', 1),
+			FST::RELATION('i', 1), FST::RELATION('j', 1),
+			FST::RELATION('k', 1), FST::RELATION('l', 1),
+			FST::RELATION('m', 1), FST::RELATION('n', 1),
+			FST::RELATION('o', 1), FST::RELATION('p', 1),
+			FST::RELATION('q', 1), FST::RELATION('r', 1),
+			FST::RELATION('s', 1), FST::RELATION('t', 1),
+			FST::RELATION('u', 1), FST::RELATION('v', 1),
+			FST::RELATION('w', 1), FST::RELATION('x', 1),
+			FST::RELATION('y', 1), FST::RELATION('z', 1)
+		),
+
+		FST::NODE()
+	);
+
+
+	FST::FST typeStringLiteral("", 4,
+		//                      
+		FST::NODE(1,
+			FST::RELATION('\'', 1)),
+		FST::NODE(384,
+			FST::RELATION('!', 2), FST::RELATION('@', 2), FST::RELATION('#', 2), FST::RELATION('$', 2), FST::RELATION('%', 2), FST::RELATION('^', 2),
+			FST::RELATION('&', 2), FST::RELATION('*', 2), FST::RELATION('(', 2), FST::RELATION(')', 2), FST::RELATION('-', 2), FST::RELATION('_', 2),
+			FST::RELATION('+', 2), FST::RELATION('=', 2), FST::RELATION('~', 2), FST::RELATION('`', 2), FST::RELATION('1', 2), FST::RELATION('2', 2),
+			FST::RELATION('3', 2), FST::RELATION('4', 2), FST::RELATION('5', 2), FST::RELATION('6', 2), FST::RELATION('7', 2), FST::RELATION('8', 2),
+			FST::RELATION('9', 2), FST::RELATION('0', 2), FST::RELATION('	', 2), FST::RELATION(' ', 2), FST::RELATION('q', 2), FST::RELATION('w', 2),
+			FST::RELATION('e', 2), FST::RELATION('r', 2), FST::RELATION('t', 2), FST::RELATION('y', 2), FST::RELATION('u', 2), FST::RELATION('i', 2),
+			FST::RELATION('o', 2), FST::RELATION('p', 2), FST::RELATION('{', 2), FST::RELATION('[', 2), FST::RELATION('}', 2), FST::RELATION(']', 2),
+			FST::RELATION('\\', 2), FST::RELATION('|', 2), FST::RELATION('Q', 2), FST::RELATION('W', 2), FST::RELATION('R', 2), FST::RELATION('T', 2), FST::RELATION('Y', 2),
+			FST::RELATION('U', 2), FST::RELATION('I', 2), FST::RELATION('O', 2), FST::RELATION('P', 2), FST::RELATION('a', 2), FST::RELATION('s', 2),
+			FST::RELATION('d', 2), FST::RELATION('f', 2), FST::RELATION('g', 2), FST::RELATION('h', 2), FST::RELATION('j', 2), FST::RELATION('k', 2),
+			FST::RELATION('l', 2), FST::RELATION(':', 2), FST::RELATION(';', 2), FST::RELATION('\'', 2), FST::RELATION('"', 2), FST::RELATION('A', 2),
+			FST::RELATION('S', 2), FST::RELATION('D', 2), FST::RELATION('F', 2), FST::RELATION('G', 2), FST::RELATION('H', 2), FST::RELATION('J', 2),
+			FST::RELATION('K', 2), FST::RELATION('L', 2), FST::RELATION('z', 2), FST::RELATION('x', 2), FST::RELATION('c', 2), FST::RELATION('v', 2),
+			FST::RELATION('b', 2), FST::RELATION('n', 2), FST::RELATION('m', 2), FST::RELATION(',', 2), FST::RELATION('.', 2), FST::RELATION('/', 2),
+			FST::RELATION('Z', 2), FST::RELATION('X', 2), FST::RELATION('C', 2), FST::RELATION('V', 2), FST::RELATION('B', 2), FST::RELATION('N', 2),
+			FST::RELATION('M', 2), FST::RELATION('<', 2), FST::RELATION('>', 2), FST::RELATION('?', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2), FST::RELATION(' ', 2),
+			FST::RELATION('!', 1), FST::RELATION('@', 1), FST::RELATION('#', 1), FST::RELATION('$', 1), FST::RELATION('%', 1), FST::RELATION('^', 1),
+			FST::RELATION('&', 1), FST::RELATION('*', 1), FST::RELATION('(', 1), FST::RELATION(')', 1), FST::RELATION('-', 1), FST::RELATION('_', 1),
+			FST::RELATION('+', 1), FST::RELATION('=', 1), FST::RELATION('~', 1), FST::RELATION('`', 1), FST::RELATION('1', 1), FST::RELATION('2', 1),
+			FST::RELATION('3', 1), FST::RELATION('4', 1), FST::RELATION('5', 1), FST::RELATION('6', 1), FST::RELATION('7', 1), FST::RELATION('8', 1),
+			FST::RELATION('9', 1), FST::RELATION('0', 1), FST::RELATION('	', 1), FST::RELATION(' ', 1), FST::RELATION('q', 1), FST::RELATION('w', 1),
+			FST::RELATION('e', 1), FST::RELATION('r', 1), FST::RELATION('t', 1), FST::RELATION('y', 1), FST::RELATION('u', 1), FST::RELATION('i', 1),
+			FST::RELATION('o', 1), FST::RELATION('p', 1), FST::RELATION('{', 1), FST::RELATION('[', 1), FST::RELATION('}', 1), FST::RELATION(']', 1),
+			FST::RELATION('\\', 1), FST::RELATION('|', 1), FST::RELATION('Q', 1), FST::RELATION('W', 1), FST::RELATION('R', 1), FST::RELATION('T', 1), FST::RELATION('Y', 1),
+			FST::RELATION('U', 1), FST::RELATION('I', 1), FST::RELATION('O', 1), FST::RELATION('P', 1), FST::RELATION('a', 1), FST::RELATION('s', 1),
+			FST::RELATION('d', 1), FST::RELATION('f', 1), FST::RELATION('g', 1), FST::RELATION('h', 1), FST::RELATION('j', 1), FST::RELATION('k', 1),
+			FST::RELATION('l', 1), FST::RELATION(':', 1), FST::RELATION(';', 1), FST::RELATION('\'', 1), FST::RELATION('"', 1), FST::RELATION('A', 1),
+			FST::RELATION('S', 1), FST::RELATION('D', 1), FST::RELATION('F', 1), FST::RELATION('G', 1), FST::RELATION('H', 1), FST::RELATION('J', 1),
+			FST::RELATION('K', 1), FST::RELATION('L', 1), FST::RELATION('z', 1), FST::RELATION('x', 1), FST::RELATION('c', 1), FST::RELATION('v', 1),
+			FST::RELATION('b', 1), FST::RELATION('n', 1), FST::RELATION('m', 1), FST::RELATION(',', 1), FST::RELATION('.', 1), FST::RELATION('/', 1),
+			FST::RELATION('Z', 1), FST::RELATION('X', 1), FST::RELATION('C', 1), FST::RELATION('V', 1), FST::RELATION('B', 1), FST::RELATION('N', 1),
+			FST::RELATION('M', 1), FST::RELATION('<', 1), FST::RELATION('>', 1), FST::RELATION('?', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1),
+			FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1), FST::RELATION(' ', 1)
+		),
+		FST::NODE(1,
+			FST::RELATION('\'', 3)),
+		FST::NODE()
+	);
+
+	FST::FST typeNumbLiteral("", 3,
+		FST::NODE(20,
+			FST::RELATION('0', 2), FST::RELATION('1', 2), FST::RELATION('2', 2), FST::RELATION('3', 2), FST::RELATION('4', 2),
+			FST::RELATION('5', 2), FST::RELATION('6', 2), FST::RELATION('7', 2), FST::RELATION('8', 2), FST::RELATION('9', 2),
+			FST::RELATION('1', 1), FST::RELATION('2', 1), FST::RELATION('3', 1), FST::RELATION('4', 1),
+			FST::RELATION('5', 1), FST::RELATION('6', 1), FST::RELATION('7', 1), FST::RELATION('8', 1), FST::RELATION('9', 1)),
+
+		FST::NODE(20,
+			FST::RELATION('0', 2), FST::RELATION('1', 2), FST::RELATION('2', 2), FST::RELATION('3', 2), FST::RELATION('4', 2),
+			FST::RELATION('5', 2), FST::RELATION('6', 2), FST::RELATION('7', 2), FST::RELATION('8', 2), FST::RELATION('9', 2),
+			FST::RELATION('0', 1), FST::RELATION('1', 1), FST::RELATION('2', 1), FST::RELATION('3', 1), FST::RELATION('4', 1),
+			FST::RELATION('5', 1), FST::RELATION('6', 1), FST::RELATION('7', 1), FST::RELATION('8', 1), FST::RELATION('9', 1)),
+
+		FST::NODE()
+
+	);
+
+	//                             s                                               fst
+	bool check(std::string s, FST::FST fst)
+	{
+		//                                                fst
+		fst.string = s;
+
+		//                                                               
+		return FST::execute(fst);
+	}
+
+
+	//                    getIdentifierContext,                                                       
+	std::string getIdentifierContext(const LT::LexTable& lextable, int currentIndex)
+	{
+		//                                             
+		std::string context;
+		std::string buffer;
+		std::string buff;
+		std::string type;
+
+		//         ,                 
+		if (context.empty())
+		{
+			//            :                                                                 
+			for (int i = currentIndex - 1; i >= 0; i--)
+			{
+				//         ,                     -                (t)                           ,                 
+				if (lextable.table[i].lexema == 't' && lextable.table[i + 1].comm == lextable.table[currentIndex - 1].comm)
+				{
+					//                                             (integer     string)
+					if (lextable.table[i].comm == "integer")
+					{
+						type += "_integer_";
+					}
+					if (lextable.table[i].comm == "string")
+					{
+						type += "_string_";
+					}
+
+					//                 
+					break;
+				}
+			}
+
+			//            :                                                                 
+			for (int i = currentIndex - 1; i >= 0; i--)
+			{
+				const LT::Entry& entry = lextable.table[i];
+				//         ,                     -                        (LEX_FUNCTION)
+				if (entry.lexema == LEX_FUNCTION)
+				{
+					//            "function"           
+					buffer += "function";
+
+					//               (integer     string)                                              
+					if (lextable.table[i - 1].comm == "integer")
+					{
+						type += "_integer_";
+					}
+					if (lextable.table[i - 1].comm == "string") {
+						type += "_string_";
+					}
+
+					//                                                    
+					buff = lextable.table[i + 1].comm;
+					buffer += type;
+					buffer += buff;
+
+					//                             
+					type.clear();
+					buff.clear();
+
+					//                 
+					break;
+				}
+				//         ,                     -                       
+				else if (entry.lexema == LEX_LEFTBRACE)
+				{
+					//                :                                          
+					for (int j = i; j >= 0; j--)
+					{
+						if (lextable.table[j].lexema == LEX_FUNCTION)
+						{
+							//         ,                                 (LIB_FUNCTION1     LIB_FUNCTION2)
+							if (lextable.table[j].comm == LIB_FUNCTION1 ||
+								lextable.table[j].comm == LIB_FUNCTION2)
+							{
+								continue;
+							}
+
+							//                                      "var_function"           
+							buff = lextable.table[j + 1].comm;
+							buffer += "var_function";
+
+							//                 
+							break;
+						}
+
+						//         ,                     -                     (LEX_MAINFUNC)
+						if (lextable.table[j].lexema == LEX_MAINFUNC)
+						{
+							//            "var_main"           
+							buffer += "var_main";
+
+							//                 
+							break;
+						}
+					}
+
+					//                                   
+					buffer += type;
+					buffer += buff;
+
+					//                             
+					type.clear();
+					buff.clear();
+
+					//                 
+					break;
+				}
+				//         ,                     -                        (LEX_LEFTHESIS)
+				else if (entry.lexema == LEX_LEFTHESIS)
+				{
+					//                                           
+					if (lextable.table[i - 1].lexema == LEX_RAV || lextable.table[i - 1].lexema == 'v' || lextable.table[i + 1].lexema == 'v')
+					{
+						//        
+						;
+					}
+
+					//                :                                          ,                                      
+					for (int j = i; j >= 0 && j != LEX_RIGHTBRACE; j--)
+					{
+						//         ,                                  -                   (LEX_ID)
+						if (buffer.empty())
+						{
+							if (lextable.table[j].lexema == LEX_ID && lextable.table[j - 1].lexema == LEX_FUNCTION)
+							{
+								//                                        "parameter_function"           
+								buff = lextable.table[j + 1].comm;
+								buffer += "parameter_function";
+
+								//                 
+								break;
+							}
+						}
+
+						//         ,                                  -                       
+						if (buffer.empty())
+						{
+							if (lextable.table[j].lexema == LEX_LEFTBRACE)
+							{
+								//                :                                          
+								for (int k = j; k >= 0; k--)
+								{
+									if (lextable.table[k].lexema == LEX_FUNCTION)
+									{
+										//         ,                                 (LIB_FUNCTION1     LIB_FUNCTION2)
+										if (lextable.table[k].comm == LIB_FUNCTION1 ||
+											lextable.table[k].comm == LIB_FUNCTION2)
+										{
+											continue;
+										}
+
+										//                                      "var_function"           
+										buff = lextable.table[k + 1].comm;
+										buffer += "var_function";
+
+										//                 
+										break;
+									}
+
+									//         ,                     -                     (LEX_MAINFUNC)
+									if (lextable.table[k].lexema == LEX_MAINFUNC)
+									{
+										//            "var_main"           
+										buffer += "var_main";
+
+										//                 
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					//                                   
+					buffer += type;
+					buffer += buff;
+
+					//                             
+					type.clear();
+					buff.clear();
+
+					//                 
+					break;
+				}
+			}
+		}
+
+		//                                             context
+		context = buffer;
+
+		//                  
+		return context;
+	}
+
+
+	//         fillFields                  idEntry                                                       
+	void fillFields(IT::Entry& idEntry, std::string context)
+	{
+		//         ,                          "function_string_"
+		if (context.find("function_string_") == 0)
+		{
+			//                                                                   string
+			idEntry.functionname = idEntry.id;
+			idEntry.idtype = IT::IDTYPE::F;
+			idEntry.iddatatype = IT::IDDATATYPE::STR;
+		}
+		//         ,                          "function_integer_"
+		else if (context.find("function_integer_") == 0)
+		{
+			//                                                                   integer
+			idEntry.functionname = idEntry.id;
+			idEntry.idtype = IT::IDTYPE::F;
+			idEntry.iddatatype = IT::IDDATATYPE::INT;
+		}
+		//         ,                          "parameter_function"
+		else if (context.find("parameter_function") == 0)
+		{
+			//                                              
+			idEntry.idtype = IT::IDTYPE::P;
+			//         ,                      "string"
+			if (context.find("string") != std::string::npos)
+			{
+				idEntry.iddatatype = IT::IDDATATYPE::STR;
+				idEntry.value.setString("");
+			}
+			//         ,                      "integer"
+			else if (context.find("integer") != std::string::npos)
+			{
+				idEntry.iddatatype = IT::IDDATATYPE::INT;
+				idEntry.value.setInteger(0);
+			}
+			//                                      
+			std::string buff;
+			size_t lastUnderscorePos = context.rfind("_");
+			if (lastUnderscorePos != std::string::npos)
+			{
+				buff = context.substr(lastUnderscorePos + 1);
+			}
+			idEntry.fun = buff;
+		}
+		//         ,                          "var_main"
+		else if (context.find("var_main") == 0)
+		{
+			//                                                         
+			idEntry.idtype = IT::IDTYPE::V;
+			//         ,                      "string"
+			if (context.find("string") != std::string::npos)
+			{
+				idEntry.iddatatype = IT::IDDATATYPE::STR;
+				idEntry.value.setString("");
+			}
+			//         ,                      "integer"
+			if (context.find("integer") != std::string::npos)
+			{
+				idEntry.iddatatype = IT::IDDATATYPE::INT;
+				idEntry.value.setInteger(0);
+			}
+			//                                "main"
+			idEntry.fun = "main";
+		}
+		//         ,                          "var_function"
+		else if (context.find("var_function") == 0)
+		{
+			//                                                                  
+			idEntry.idtype = IT::IDTYPE::V;
+			//         ,                      "string"
+			if (context.find("string") != std::string::npos)
+			{
+				idEntry.iddatatype = IT::IDDATATYPE::STR;
+				idEntry.value.setString("");
+			}
+			//         ,                      "integer"
+			if (context.find("integer") != std::string::npos)
+			{
+				idEntry.iddatatype = IT::IDDATATYPE::INT;
+				idEntry.value.setInteger(0);
+			}
+			//                                      
+			std::string buff;
+			size_t lastUnderscorePos = context.rfind("_");
+			if (lastUnderscorePos != std::string::npos)
+			{
+				buff = context.substr(lastUnderscorePos + 1);
+			}
+			idEntry.fun = buff;
+		}
+	}
+
+
+	//         addIdentificator                                          (lextable)                           (idtable)
+	void addIdentificator(LT::LexTable& lextable, IT::IdTable& idtable, std::string word, LT::Entry& lexEntry, int line)
+	{
+		//                           LEX_ID                             
+		lexEntry.lexema = LEX_ID;
+		lexEntry.sn = line;
+
+		//                                   ,                                       ID_MAXSIZE
+		if (word.length() > ID_MAXSIZE && (word != LIB_FUNCTION1 && word != LIB_FUNCTION2))
+		{
+			word = word.substr(0, ID_MAXSIZE);
+		}
+
+		//                                             
+		lexEntry.comm = word;
+
+		//                                   
+		LT::Add(lextable, lexEntry);
+
+		//                                                
+		int size = lextable.size - 1;
+
+		//                                  
+		IT::Entry idEntry;
+
+		//                                     
+		std::string context = getIdentifierContext(lextable, lextable.size);
+
+		//                                             
+		int idIndex = IsId(idtable, word, idEntry.functionname, idEntry.fun);
+
+		//                                  
+		if (idIndex != TI_NULLIDX)
+		{
+			idEntry.id = word;
+
+			//                                                         
+			fillFields(idEntry, context);
+
+			//                                                       
+			if (idtable.table[idIndex].idtype == 4)
+			{
+				//                                                                       
+				bool condition1 = ((lextable.table[size - 1].lexema == LEX_LEFTHESIS && lextable.table[size - 2].lexema == LEX_ID)
+					|| (lextable.table[size - 1].lexema == LEX_COMMA && lextable.table[size - 2].lexema == LEX_ID) || lextable.table[size - 1].lexema == LEX_SEMICOLON
+					|| lextable.table[size - 1].lexema == LEX_PRINT || lextable.table[size - 1].lexema == LEX_RETURN);
+				bool condition2 = (idtable.table[idIndex].iddatatype == idEntry.iddatatype &&
+					idtable.table[idIndex].idtype == idEntry.idtype && idtable.table[idIndex].fun == idEntry.fun);
+
+				//                                ,                                                 
+				if (!condition1)
+				{
+					if (!condition2)
+					{
+						idEntry.idxfirstLE = size;
+						lextable.table[size].idxTI = idtable.size;
+
+						//                                           
+						IT::Add(idtable, idEntry);
+					}
+				}
+				//                                                                            
+				else
+				{
+					int bufIndex = idtable.table[idIndex].idxfirstLE;
+					lextable.table[size].idxTI = lextable.table[bufIndex].idxTI;
+				}
+			}
+			else if (idtable.table[idIndex].idtype == 3)
+			{
+				if (idtable.table[idIndex].fun != idEntry.fun)
+				{
+					idEntry.idxfirstLE = size;
+					lextable.table[size].idxTI = idtable.size;
+
+					//                                           
+					IT::Add(idtable, idEntry);
+				}
+				else
+				{
+					int bufIndex = idtable.table[idIndex].idxfirstLE;
+					lextable.table[size].idxTI = lextable.table[bufIndex].idxTI;
+				}
+			}
+			else
+			{
+				int bufIndex = idtable.table[idIndex].idxfirstLE;
+				lextable.table[size].idxTI = lextable.table[bufIndex].idxTI;
+			}
+		}
+		//                                                           
+		else
+		{
+			idEntry.id = word;
+			fillFields(idEntry, context);
+
+			//                                                                          
+			if (idEntry.iddatatype == IT::IDDATATYPE::STR || idEntry.iddatatype == IT::IDDATATYPE::INT)
+			{
+				idEntry.idxfirstLE = size;
+				lextable.table[size].idxTI = idtable.size;
+
+				//                                           
+				IT::Add(idtable, idEntry);
+			}
+		}
+	}
+
+
+
+	void parse(In::IN in, LT::LexTable& lextable, IT::IdTable& idtable)
+	{
+		////                                                
+		LT::Entry lex;
+		IT::Entry idn;
+		//       ,                       
+		std::string separators = "();{}=*/+-|, ";
+		//                                                    
+		std::string buff = "";
+		//     ,            ,                                   (                        )
+		bool insideString = false;
+		//                              
+		int numbMarks = 0;
+		//                                                           
+		int line = 0;
+		int pos = 0;
+		//                      
+		int count = 0;
+		//                                      
+		for (line = 0; line < in.text.size(); line++)
+		{
+			//                        
+			buff = in.text[line];
+			//                                        (       )
+			std::string word = "";
+			//                                      
+			for (pos = 0; pos < buff.size(); pos++)
+			{
+				//                             
+				if (insideString)
+				{
+					if (buff[pos] == '\'')
+					{
+						insideString = false;
+						//                          
+						word += (unsigned char)buff[pos];
+						word.erase(0, 1);
+						word.erase(word.length() - 1, 1);
+						//          ,                                                     
+						int i = IT::findLexStr(idtable, word);
+						//                                                  
+						lex.lexema = LEX_LITERAL;
+						lex.sn = line;
+						lex.comm = word;
+						if (i != LT_TI_NULLIDX)
+						{
+							lex.idxTI = i;
+						}
+
+						else
+						{
+							idn.id = "L" + std::to_string(count);
+							idn.iddatatype = IT::STR;
+							idn.idtype = IT::L;
+							idn.idxfirstLE = lextable.size;
+							lex.idxTI = idtable.size;
+							idn.value.setString(word);
+							count++;
+							IT::Add(idtable, idn);
+						}
+
+						LT::Add(lextable, lex);
+					}
+					else
+					{
+						word += (unsigned char)buff[pos];
+					}
+				}
+				//                     -                  ,                     
+				else if (buff[pos] == '\'')
+				{
+					insideString = true;
+					word += (unsigned char)buff[pos];
+				}
+				//                     -                                  
+				else if (separators.find(buff[pos]) != std::string::npos && !insideString)
+				{
+					std::string buffer = "";
+					buffer += buff[pos];
+					//                                      
+					switch (buff[pos]) //                                                      pos
+					{
+					case ' ':
+					{
+						break; //                   ,                                                  
+					}
+					case '|':
+					{
+						break; //                                '|',                                                  
+					}
+					case '-':
+					{
+						if (check(buffer, typeMinus)) //         ,                             "     "
+						{
+							lex.lexema = LEX_MINUS; //                            LEX_MINUS
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "     ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+					case '+':
+					{
+						if (check(buffer, typePlus)) //         ,                             "    "
+						{
+							lex.lexema = LEX_PLUS; //                            LEX_PLUS
+							lex.sn = line; //                        ,                      
+							// lex.sn++; //                          ,         ,                                               
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "    ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case '*':
+					{
+						if (check(buffer, typeMulti)) //         ,                             "         "
+						{
+							lex.lexema = LEX_STAR; //                            LEX_STAR
+							lex.sn = line; //                        ,                      
+							// lex.sn++; //                          ,         ,                                               
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "         ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case '/':
+					{
+						if (check(buffer, typeDel)) //         ,                             "       "
+						{
+							lex.lexema = LEX_DIRSLASH; //                            LEX_DIRSLASH (                                   )
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							// lex.sn++; //                          ,         ,                                               
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "       ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case '(':
+					{
+						if (check(buffer, typeLeftThesis)) //         ,                             "            "
+						{
+							lex.lexema = LEX_LEFTHESIS; //                            LEX_LEFTHESIS
+							lex.sn = line; //                        ,                      
+							// lex.sn++; //                          ,         ,                                               
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "            ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case ')':
+					{
+						if (check(buffer, typeRightThesis)) //         ,                             "             "
+						{
+							lex.lexema = LEX_RIGHTHESIS; //                            LEX_RIGHTHESIS
+							lex.sn = line; //                        ,                      
+							// lex.sn++; //                          ,         ,                                               
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "             ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case '{':
+					{
+						if (check(buffer, typeLeftBrace)) //         ,                             "                     "
+						{
+							lex.lexema = LEX_LEFTBRACE; //                            LEX_LEFTBRACE
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "                     ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case '}':
+					{
+						if (check(buffer, typeRightBrace)) //         ,                             "                      "
+						{
+							lex.lexema = LEX_RIGHTBRACE; //                            LEX_RIGHTBRACE
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "                      ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case ',':
+					{
+						if (check(buffer, typeComma)) //         ,                             "       "
+						{
+							lex.lexema = LEX_COMMA; //                            LEX_COMMA
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "       ",                           117
+							throw ERROR_THROW_IN(117, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case ';':
+					{
+						if (check(buffer, typeSemicolon)) //         ,                             "               "
+						{
+							lex.lexema = LEX_SEMICOLON; //                            LEX_SEMICOLON
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "               ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					case '=':
+					{
+						if (check(buffer, typeEquals)) //         ,                             "     "
+						{
+							lex.lexema = LEX_RAV; //                            LEX_RAV (     )
+							lex.sn = line; //                        ,                      
+							lex.idxTI = -1; //                                                   -1 (            )
+							LT::Add(lextable, lex); //                                         
+						}
+						else
+						{
+							//                                  "     ",                           105
+							throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						}
+						break; //                         
+					}
+
+					default:
+					{
+						//                                                          ,                           105
+						throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text);
+						break; //                          (             ,         throw                         )
+					}
+					} //                 switch
+					buffer.clear(); //                                                
+				}
+				else
+				{
+					//                                   ,                                 (     )
+					word += (unsigned char)buff[pos];
+					char k = buff[pos + 1];
+					//                       -            ,          ,                      
+					if (separators.find(buff[pos + 1]) != std::string::npos)
+					{
+						switch ((unsigned char)word[0]) //                                      
+						{
+						case 'i':
+						{
+							//                      ,                  'i'
+							if (check(word, typeInteger)) //         ,                             "integer"
+							{
+								//                               "integer",                                  
+								lex.lexema = LEX_INTEGER; //                            LEX_INTEGER
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								lex.comm = word; //                                           
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								//                       ,                 
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								//                                                         ,                   
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+
+							break; //                         
+						}
+						case 'd':
+						{
+							if (check(word, typeDeclare)) //         ,                             "declare"
+							{
+								lex.lexema = LEX_DECLARE; //                            LEX_DECLARE
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								// lex.sn++; //                          ,         ,                                                     
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+							break; //                         
+						}
+
+						case 's':
+						{
+							if (check(word, typeString)) //         ,                             "string"
+							{
+								lex.lexema = LEX_STRING; //                            LEX_STRING
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								lex.comm = word; //                                           
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+							break; //                         
+						}
+						case 'f':
+						{
+							if (check(word, typeFunction)) //         ,                             "function"
+							{
+								lex.lexema = LEX_FUNCTION; //                            LEX_FUNCTION
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								lex.comm = word; //                                           
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+							break; //                         
+						}
+
+						case 'm':
+						{
+							if (check(word, typeMain)) //         ,                             "main"
+							{
+								lex.lexema = LEX_MAINFUNC; //                            LEX_MAINFUNC
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								lex.comm = word; //                                           
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+							break; //                         
+						}
+						case 'r':
+						{
+							if (check(word, typeReturn)) //         ,                             "return"
+							{
+								lex.lexema = LEX_RETURN; //                            LEX_RETURN
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								lex.comm = word; //                                           
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+							break; //                         
+						}
+
+						case 'p':
+						{
+							if (check(word, typePrint)) //         ,                             "print"
+							{
+								lex.lexema = LEX_PRINT; //                            LEX_PRINT
+								lex.sn = line; //                        
+								lex.idxTI = -1; //                                                   -1 (            )
+								lex.comm = word; //                                           
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+
+								word.clear(); //                                                
+							}
+							else
+							{
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+							break; //                         
+						}
+
+						default:
+						{
+							if (check(word, typeNumbLiteral)) //         ,                                     
+							{
+								int i = IT::findLexInteger(idtable, stoi(word)); //                                                        
+								lex.lexema = LEX_LITERAL; //                            LEX_LITERAL
+								lex.sn = line; //                        
+								lex.comm = word; //                                           
+								if (i != LT_TI_NULLIDX) //                                                
+								{
+									lex.idxTI = i; //                                          
+								}
+								else
+								{
+									//                         ,                              
+									idn.id = "L" + std::to_string(count); //                                         
+									idn.iddatatype = IT::INT; //                           INT
+									idn.idtype = IT::L; //                                                       
+
+									idn.idxfirstLE = lextable.size; //                                                       
+
+									lex.idxTI = idtable.size; //                                          
+
+									idn.value.setInteger(stoi(word)); //                                  
+									count++; //                                   
+									IT::Add(idtable, idn); //                                                           
+								}
+								LT::Add(lextable, lex); //                                         
+
+								word.clear(); //                                                
+							}
+							else if (check(word, typeIdentificator)) //         ,                                  
+							{
+								addIdentificator(lextable, idtable, word, lex, line); //                                    
+								word.clear(); //                                                
+							}
+							else
+							{
+								//                                                         ,                   
+								throw ERROR_THROW_IN(105, ++line, ++pos, buff, in.text); //                          105                             
+							}
+
+							break; //                         
+						}
+						}
+
+					}
+
+				}
+			}
+
+		}
+
+
+		std::cout << "\n";
+
+		std::cout << "\n\n                       :\n";
+		std::cout << std::setfill(' ');
+
+		for (int i = 0; i < lextable.size; i++) //                                           
+		{
+			(std::cout) << i << '\t' << "SN: " << lextable.table[i].sn << ", " //                                 
+				<< "IdxTI: " << lextable.table[i].idxTI << ", " //                                      
+				<< "Lexema: " << lextable.table[i].lexema << std::endl; //                                        
+		}
+
+		std::cout << "\n"; //                                   
+
+		std::cout << "\n\n                       :\n"; //                                        
+
+		//                                                                                                    
+		//std::cout << std::left << std::setw(20) << "Index"
+		//	<< std::setw(20) << "Index FirstLE"
+		//	<< std::setw(20) << "Identifier"
+		//	<< std::setw(20) << "Function"
+		//	<< std::setw(10) << "Type"
+		//	<< std::setw(30) << "Value"
+		//	<< std::setw(25) << "Function Name" << "\n";
+
+		std::cout << std::setfill(' '); //                                                   
+
+		for (int i = 0; i < idtable.size; i++) { //                                               
+			std::string type; //                                           
+			switch (idtable.table[i].iddatatype) { //                                       
+			case IT::INT:
+				type = "INT"; //          INT
+				break;
+			case IT::STR:
+				type = "STR"; //          STR
+				break;
+			default:
+				type = "Unknown"; //                    
+			}
+
+			std::string idtype; //                                                   
+			switch (idtable.table[i].idtype) { //                                
+			case IT::V:
+				idtype = "Variable"; //                    
+				break;
+			case IT::F:
+				idtype = "Function"; //                 
+				break;
+			case IT::P:
+				idtype = "Parameter"; //                  
+				break;
+			case IT::L:
+				idtype = "Local Variable"; //                              
+				break;
+			default:
+				idtype = "Unknown"; //                    
+			}
+
+			//                                              (        ,         ,          )
+			std::cout << std::left << std::setw(20) << "Index"
+				<< std::setw(20) << "IdxfirstLE"
+				<< std::setw(15) << "ID"
+				<< std::setw(15) << "Fun"
+				<< std::setw(10) << "Type";
+
+			//                                        ,                           
+			if (idtable.table[i].idtype != IT::F) {
+				if (idtable.table[i].iddatatype == IT::INT) {
+					std::cout << std::setw(15) << "IntValue"; //                                            
+				}
+				else if (idtable.table[i].iddatatype == IT::STR) {
+					std::cout << std::setw(15) << "StrValue"; //                                        
+				}
+			}
+			else {
+				std::cout << std::setw(15) << "-"; //             ,                             
+			}
+
+			std::cout << std::setw(30) << "Function Name" << "\n"; //                                  
+
+			//                                                                                       
+			std::cout << std::left << std::setw(20) << i //              
+				<< std::setw(20) << idtable.table[i].idxfirstLE //                                                   
+				<< std::setw(15) << idtable.table[i].id //                     
+				<< std::setw(15) << idtable.table[i].fun //              
+				<< std::setw(10) << type; //                  
+
+			if (idtable.table[i].idtype != IT::F) { //                                        
+				if (idtable.table[i].iddatatype == IT::INT) {
+					std::cout << std::setw(15) << idtable.table[i].value.vint; //                              
+				}
+				else if (idtable.table[i].iddatatype == IT::STR) {
+					std::cout << std::setw(15) << idtable.table[i].value.vstr; //                          
+				}
+			}
+			else {
+				std::cout << std::setw(15) << "-"; //             ,                             
+			}
+
+			std::cout << std::setw(30) << idtable.table[i].functionname << "\n"; //                    
+		}
+
+		std::cout << '\n'; //                                          
+
+	} //                                       
+} //                                      
+
+SE_Lab17.cpp
+------------------
+#pragma comment(linker, "/STACK:16777216")
+#include "stdafx.h"
+#include <iostream>
+#include "Error.h"		
+#include "Parm.h"		
+#include <cwchar>
+#include <time.h>
+using namespace std;
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	setlocale(LC_ALL, ".1251");
+	Out::OUT out = Out::INITOUT;
+	Log::LOG log = Log::INITLOG;
+	In::IN in;
+	try
+	{
+		LT::LexTable lextab = LT::Create(LT_MAXSIZE - 1);
+		IT::IdTable idtab = IT::Create(TI_MAXSIZE - 1);
+		Parm::PARM parm = Parm::getparm(argc, argv);
+		log = Log::getlog(parm.log);
+		Log::WriteLine(log, (char*)"Текст:", (char*)"без ошибки \n", "");
+		Log::WriteLine(log, (wchar_t*)L"Текст", (wchar_t*)L" без ошибок \n", L"");
+		out = Out::getout(parm.out);
+		Log::WriteParm(log, parm);
+		Log::WriteLog(log);
+		In::IN in = In::getin(parm.in);
+
+		Log::WriteIn(log, in);
+		Out::WriteOut(in, parm.out);
+
+		// Вывод всего текста
+		for (size_t i = 0; i < in.text.size(); i++)
+		{
+			cout << in.text[i] << endl;
+		}
+
+		cout << "Всего символов:" << in.size << endl;
+		cout << "Всего строк:" << in.lines << endl;
+
+		Lexer::parse(in, lextab, idtab);
+		Log::WriteLexTable(log, lextab);
+		Log::Close(log);
+		Out::Close(out);
+
+
+
+	}
+	catch (Error::ERROR e)
+	{
+		cout << "Ошибка" << e.id << ": " << e.message << endl << endl;
+		cout << "строка:" << e.inext.line << " позиция:" << e.inext.col << endl << endl;
+		Log::WriteError(log, e);
+		Out::WriteError(out, e);
+		if (e.inext.line != -1 && e.inext.col != -1)
+		{
+			cout << "Ошибка в строке " << ": " << e.inext.buff << endl << endl;
+
+		}
+
+	}
+
+	system("pause");
+
+	return 0;
+
+}

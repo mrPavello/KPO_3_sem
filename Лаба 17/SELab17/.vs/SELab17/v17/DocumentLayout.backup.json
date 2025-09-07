@@ -1,0 +1,360 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Lexer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Lexer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Log.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Log.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\SE_lab17.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\SE_lab17.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Lexer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Lexer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\LT.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\LT.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\LT.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\LT.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\IT.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\IT.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\IT.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\IT.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Fst.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Fst.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\FST.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\FST.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Out.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Out.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Out.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Out.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Log.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Log.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\In.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\In.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\In.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\In.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Parm.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Parm.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Parm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Parm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Error.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Error.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Error.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\Error.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\stdafx.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{211C5171-EF20-451F-B119-412BFAFB8179}|SELab17\\SELab17.vcxproj|solutionrelative:SELab17\\stdafx.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 11,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "stdafx.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\stdafx.h",
+              "RelativeDocumentMoniker": "SELab17\\stdafx.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\stdafx.h",
+              "RelativeToolTip": "SELab17\\stdafx.h",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAcwA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:25:53.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SE_lab17.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\SE_lab17.cpp",
+              "RelativeDocumentMoniker": "SELab17\\SE_lab17.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\SE_lab17.cpp",
+              "RelativeToolTip": "SELab17\\SE_lab17.cpp",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAcwD4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:25:05.622Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Parm.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Parm.h",
+              "RelativeDocumentMoniker": "SELab17\\Parm.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Parm.h",
+              "RelativeToolTip": "SELab17\\Parm.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:24:20.646Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Parm.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Parm.cpp",
+              "RelativeDocumentMoniker": "SELab17\\Parm.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Parm.cpp",
+              "RelativeToolTip": "SELab17\\Parm.cpp",
+              "ViewState": "AgIAACMAAAAAAAAAAAAcwDMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:23:59.082Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Out.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Out.h",
+              "RelativeDocumentMoniker": "SELab17\\Out.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Out.h",
+              "RelativeToolTip": "SELab17\\Out.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:23:35.783Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Out.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Out.cpp",
+              "RelativeDocumentMoniker": "SELab17\\Out.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Out.cpp",
+              "RelativeToolTip": "SELab17\\Out.cpp",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAcwCsAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:23:11.527Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LT.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\LT.h",
+              "RelativeDocumentMoniker": "SELab17\\LT.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\LT.h",
+              "RelativeToolTip": "SELab17\\LT.h",
+              "ViewState": "AgIAACUAAAAAAAAAAAAcwDQAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:22:42.917Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LT.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\LT.cpp",
+              "RelativeDocumentMoniker": "SELab17\\LT.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\LT.cpp",
+              "RelativeToolTip": "SELab17\\LT.cpp",
+              "ViewState": "AgIAABgAAAAAAAAAAAAcwCkAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:22:16.568Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Log.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Log.h",
+              "RelativeDocumentMoniker": "SELab17\\Log.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Log.h",
+              "RelativeToolTip": "SELab17\\Log.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:16:21.759Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Log.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Log.cpp",
+              "RelativeDocumentMoniker": "SELab17\\Log.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Log.cpp",
+              "RelativeToolTip": "SELab17\\Log.cpp",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAcwIMAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:14:27.564Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Lexer.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Lexer.h",
+              "RelativeDocumentMoniker": "SELab17\\Lexer.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Lexer.h",
+              "RelativeToolTip": "SELab17\\Lexer.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:13:58.828Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Lexer.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Lexer.cpp",
+              "RelativeDocumentMoniker": "SELab17\\Lexer.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Lexer.cpp",
+              "RelativeToolTip": "SELab17\\Lexer.cpp",
+              "ViewState": "AgIAAHwCAAAAAAAAAAAcwIMCAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:12:47.505Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IT.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\IT.h",
+              "RelativeDocumentMoniker": "SELab17\\IT.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\IT.h",
+              "RelativeToolTip": "SELab17\\IT.h",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAcwC4AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:12:05.778Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IT.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\IT.cpp",
+              "RelativeDocumentMoniker": "SELab17\\IT.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\IT.cpp",
+              "RelativeToolTip": "SELab17\\IT.cpp",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAcwE4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:11:31.806Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "In.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\In.h",
+              "RelativeDocumentMoniker": "SELab17\\In.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\In.h",
+              "RelativeToolTip": "SELab17\\In.h",
+              "ViewState": "AgIAABUAAAAAAAAAAAAcwCUAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:10:58.575Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "In.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\In.cpp",
+              "RelativeDocumentMoniker": "SELab17\\In.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\In.cpp",
+              "RelativeToolTip": "SELab17\\In.cpp",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAcwIcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:10:31.463Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "FST.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\FST.h",
+              "RelativeDocumentMoniker": "SELab17\\FST.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\FST.h",
+              "RelativeToolTip": "SELab17\\FST.h",
+              "ViewState": "AgIAABcAAAAAAAAAAAAcwCgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:10:05.274Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Fst.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Fst.cpp",
+              "RelativeDocumentMoniker": "SELab17\\Fst.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Fst.cpp",
+              "RelativeToolTip": "SELab17\\Fst.cpp",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAcwFQAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:09:34.771Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Error.h",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Error.h",
+              "RelativeDocumentMoniker": "SELab17\\Error.h",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Error.h",
+              "RelativeToolTip": "SELab17\\Error.h",
+              "ViewState": "AgIAABAAAAAAAAAAAAAcwCEAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-23T15:08:59.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Error.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Error.cpp",
+              "RelativeDocumentMoniker": "SELab17\\Error.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u041B\u0430\u0431\u0430 17\\SELab17\\SELab17\\Error.cpp",
+              "RelativeToolTip": "SELab17\\Error.cpp",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAcwGEAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-23T15:08:24.787Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
