@@ -1,0 +1,35 @@
+﻿Сборка начата 16.12.2024 0:56:21.
+Уровень детализации журнала: Normal.     1>Проект "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\SE_Asm01\SE_Asm01.vcxproj" в узле 2 (целевые объекты Build).
+     1>PrepareForBuild:
+         Структурированный вывод включен. Форматирование диагностики компилятора будет отражать иерархию ошибок. Подробнее см. https://aka.ms/cpp/structured-output.
+       InitializeBuildStatus:
+         Обращение к "Debug\SE_Asm01.tlog\unsuccessfulbuild".
+       _MASM:
+         Assembling SE_Asm01.asm...
+         cmd.exe /C "C:\Users\Антон Шевчик\AppData\Local\Temp\tmp06ac66450d814ed7b0dd7276ecf41b13.cmd"
+         ml.exe /c /nologo /Zi /Fo"Debug\SE_Asm01.obj" /Fl"List" /W3 /errorReport:prompt  /TaSE_Asm01.asm
+       Link:
+         C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\bin\HostX86\x86\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\Debug\SE_Asm01.exe" /INCREMENTAL /ILK:"Debug\SE_Asm01.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\Debug\SE_Asm01.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\Debug\SE_Asm01.lib" /MACHINE:X86 Debug\SE_Asm01.obj
+     1>SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _lexcompare в функции _main@0.
+     1>SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _getcurrentdate в функции _main@0.
+     1>SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _ConsoleInt в функции _main@0.
+     1>SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _ConsoleStr в функции _main@0.
+     1>SE_Asm01.obj : error LNK2001: неразрешенный внешний символ _ConsolePause.
+     1>C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\Debug\SE_Asm01.exe : fatal error LNK1120: неразрешенных внешних элементов: 5
+     1>Сборка проекта "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\SE_Asm01\SE_Asm01.vcxproj" завершена (целевые объекты Build) с ошибкой.
+
+Ошибка сборки.
+
+       "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\SE_Asm01\SE_Asm01.vcxproj" (целевой объект Build ) (1) ->
+       (Целевой объект Link) -> 
+         SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _lexcompare в функции _main@0.
+         SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _getcurrentdate в функции _main@0.
+         SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _ConsoleInt в функции _main@0.
+         SE_Asm01.obj : error LNK2019: ссылка на неразрешенный внешний символ _ConsoleStr в функции _main@0.
+         SE_Asm01.obj : error LNK2001: неразрешенный внешний символ _ConsolePause.
+         C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm01\Debug\SE_Asm01.exe : fatal error LNK1120: неразрешенных внешних элементов: 5
+
+    Предупреждений: 0
+    Ошибок: 6
+
+Прошло времени 00:00:00.26
