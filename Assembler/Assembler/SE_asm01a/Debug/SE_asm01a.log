@@ -1,0 +1,36 @@
+﻿Сборка начата 20.12.2024 1:18:42.
+Уровень детализации журнала: Normal.     1>Проект "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01a\SE_asm01a.vcxproj" в узле 2 (целевые объекты Build).
+     1>PrepareForBuild:
+         Структурированный вывод включен. Форматирование диагностики компилятора будет отражать иерархию ошибок. Подробнее см. https://aka.ms/cpp/structured-output.
+       InitializeBuildStatus:
+         Создание "Debug\SE_asm01a.tlog\unsuccessfulbuild", так как было задано "AlwaysCreate".
+         Обращение к "Debug\SE_asm01a.tlog\unsuccessfulbuild".
+       _MASM:
+         Assembling SE_asm01a.asm...
+         cmd.exe /C "C:\Users\Антон Шевчик\AppData\Local\Temp\tmp5346bf8f057449e7990713b7fe930c34.cmd"
+         ml.exe /c /nologo /Zi /Fo"Debug\SE_asm01a.obj" /W3 /errorReport:prompt  /TaSE_asm01a.asm
+     1>SE_asm01a.asm(30): warning A6004: procedure argument or local not referenced : parm
+     1>SE_asm01a.asm(30): warning A6004: procedure argument or local not referenced : parm2
+     1>SE_asm01a.asm(48): warning A6004: procedure argument or local not referenced : parm
+     1>SE_asm01a.asm(48): warning A6004: procedure argument or local not referenced : parm2
+       Lib:
+         C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\bin\HostX86\x86\Lib.exe /OUT:"C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\Debug\SE_asm01a.lib" /NOLOGO /MACHINE:X86 Debug\SE_asm01a.obj
+         SE_asm01a.vcxproj -> C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\Debug\SE_asm01a.lib
+       FinalizeBuildStatus:
+         Файл "Debug\SE_asm01a.tlog\unsuccessfulbuild" удаляется.
+         Обращение к "Debug\SE_asm01a.tlog\SE_asm01a.lastbuildstate".
+     1>Сборка проекта "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01a\SE_asm01a.vcxproj" завершена (целевые объекты Build).
+
+Сборка успешно завершена.
+
+       "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01a\SE_asm01a.vcxproj" (целевой объект Build ) (1) ->
+       (Целевой объект _MASM) -> 
+         SE_asm01a.asm(30): warning A6004: procedure argument or local not referenced : parm
+         SE_asm01a.asm(30): warning A6004: procedure argument or local not referenced : parm2
+         SE_asm01a.asm(48): warning A6004: procedure argument or local not referenced : parm
+         SE_asm01a.asm(48): warning A6004: procedure argument or local not referenced : parm2
+
+    Предупреждений: 4
+    Ошибок: 0
+
+Прошло времени 00:00:00.20

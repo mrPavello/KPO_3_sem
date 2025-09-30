@@ -1,0 +1,41 @@
+﻿Сборка начата 20.12.2024 13:36:05.
+Уровень детализации журнала: Normal.     1>Проект "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.vcxproj" в узле 2 (целевые объекты Build).
+     1>PrepareForBuild:
+         Структурированный вывод включен. Форматирование диагностики компилятора будет отражать иерархию ошибок. Подробнее см. https://aka.ms/cpp/structured-output.
+       InitializeBuildStatus:
+         Создание "Debug\SE_asm01d.tlog\unsuccessfulbuild", так как было задано "AlwaysCreate".
+         Обращение к "Debug\SE_asm01d.tlog\unsuccessfulbuild".
+       ClCompile:
+         C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\bin\HostX86\x86\CL.exe /c /ZI /JMC /nologo /W3 /WX- /diagnostics:column /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /permissive- /Fo"Debug\\" /Fd"C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\Debug\SE_asm01d.pdb" /external:W3 /Gd /TP /analyze- /FC /errorReport:prompt SE_asm01d.cpp
+         SE_asm01d.cpp
+     1>C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(13,24): warning C4018: <: несоответствие типов со знаком и без знака
+     1>C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(10,18): warning C4297: getmax: ожидается, что функция не будет выдавать исключения, но она это делает
+             C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(10,18):
+             Функция типа extern "C", указан параметр /EHc
+         
+     1>C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(29,24): warning C4018: <: несоответствие типов со знаком и без знака
+     1>C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(26,18): warning C4297: getmin: ожидается, что функция не будет выдавать исключения, но она это делает
+             C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(26,18):
+             Функция типа extern "C", указан параметр /EHc
+         
+       Lib:
+         C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\bin\HostX86\x86\Lib.exe /OUT:"C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\Debug\SE_asm01d.lib" /NOLOGO /MACHINE:X86 Debug\SE_asm01d.obj
+         SE_asm01d.vcxproj -> C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\Debug\SE_asm01d.lib
+       FinalizeBuildStatus:
+         Файл "Debug\SE_asm01d.tlog\unsuccessfulbuild" удаляется.
+         Обращение к "Debug\SE_asm01d.tlog\SE_asm01d.lastbuildstate".
+     1>Сборка проекта "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.vcxproj" завершена (целевые объекты Build).
+
+Сборка успешно завершена.
+
+       "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.vcxproj" (целевой объект Build ) (1) ->
+       (Целевой объект ClCompile) -> 
+         C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(13,24): warning C4018: <: несоответствие типов со знаком и без знака
+         C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(10,18): warning C4297: getmax: ожидается, что функция не будет выдавать исключения, но она это делает
+         C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(29,24): warning C4018: <: несоответствие типов со знаком и без знака
+         C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\Assembler\Assembler\SE_asm01d\SE_asm01d.cpp(26,18): warning C4297: getmin: ожидается, что функция не будет выдавать исключения, но она это делает
+
+    Предупреждений: 4
+    Ошибок: 0
+
+Прошло времени 00:00:00.62

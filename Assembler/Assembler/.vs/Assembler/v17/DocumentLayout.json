@@ -1,0 +1,121 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{34017D2B-AB8D-45DA-B4BD-1ED6390CD21A}|SE_asm01d\\SE_asm01d.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01d\\SE_asm01d.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{34017D2B-AB8D-45DA-B4BD-1ED6390CD21A}|SE_asm01d\\SE_asm01d.vcxproj|solutionrelative:SE_asm01d\\SE_asm01d.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10B57B4F-1C03-4EAD-B1CF-B49C1B14F727}|SE_asm01c\\SE_asm01c.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01c\\SE_asm01c.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{10B57B4F-1C03-4EAD-B1CF-B49C1B14F727}|SE_asm01c\\SE_asm01c.vcxproj|solutionrelative:SE_asm01c\\SE_asm01c.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{47234F49-ED46-4513-B790-307BF59B30A5}|SE_asm01b\\SE_asm01b.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01b\\SE_asm01b.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{47234F49-ED46-4513-B790-307BF59B30A5}|SE_asm01b\\SE_asm01b.vcxproj|solutionrelative:SE_asm01b\\SE_asm01b.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8A073476-1055-45EA-BF70-1E68125617A4}|SE_asm011a\\SE_asm011a.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm011a\\SE_asm01a.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8A073476-1055-45EA-BF70-1E68125617A4}|SE_asm011a\\SE_asm011a.vcxproj|solutionrelative:SE_asm011a\\SE_asm01a.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{11EBF176-C71A-4CC5-AAE7-3D8BBAB172BA}|Assembler\\Assembler.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\Assembler\\SE_asm01.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{11EBF176-C71A-4CC5-AAE7-3D8BBAB172BA}|Assembler\\Assembler.vcxproj|solutionrelative:Assembler\\SE_asm01.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{91226D30-A8EB-4C76-8609-5F9732205F22}|SE_asm01e\\SE_asm01e.vcxproj|E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01e\\SE_asm01e.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{91226D30-A8EB-4C76-8609-5F9732205F22}|SE_asm01e\\SE_asm01e.vcxproj|solutionrelative:SE_asm01e\\SE_asm01e.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SE_asm01.asm",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\Assembler\\SE_asm01.asm",
+              "RelativeDocumentMoniker": "Assembler\\SE_asm01.asm",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\Assembler\\SE_asm01.asm",
+              "RelativeToolTip": "Assembler\\SE_asm01.asm",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-09T20:30:37.596Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SE_asm01a.asm",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm011a\\SE_asm01a.asm",
+              "RelativeDocumentMoniker": "SE_asm011a\\SE_asm01a.asm",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm011a\\SE_asm01a.asm",
+              "RelativeToolTip": "SE_asm011a\\SE_asm01a.asm",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAACsAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-19T23:36:37.978Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SE_asm01b.asm",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01b\\SE_asm01b.asm",
+              "RelativeDocumentMoniker": "SE_asm01b\\SE_asm01b.asm",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01b\\SE_asm01b.asm",
+              "RelativeToolTip": "SE_asm01b\\SE_asm01b.asm",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAAAH8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-14T10:27:43.725Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SE_asm01c.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01c\\SE_asm01c.cpp",
+              "RelativeDocumentMoniker": "SE_asm01c\\SE_asm01c.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01c\\SE_asm01c.cpp",
+              "RelativeToolTip": "SE_asm01c\\SE_asm01c.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-14T10:28:19.937Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SE_asm01d.cpp",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01d\\SE_asm01d.cpp",
+              "RelativeDocumentMoniker": "SE_asm01d\\SE_asm01d.cpp",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01d\\SE_asm01d.cpp",
+              "RelativeToolTip": "SE_asm01d\\SE_asm01d.cpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAB0AAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-14T10:29:46.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SE_asm01e.asm",
+              "DocumentMoniker": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01e\\SE_asm01e.asm",
+              "RelativeDocumentMoniker": "SE_asm01e\\SE_asm01e.asm",
+              "ToolTip": "E:\\3 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\\u041A\u041F\u041E\\\u0410\u0440\u0445\u0438\u0432 WinRAR\\Assembler\\Assembler\\SE_asm01e\\SE_asm01e.asm",
+              "RelativeToolTip": "SE_asm01e\\SE_asm01e.asm",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-14T10:33:42.356Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
