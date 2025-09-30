@@ -1,0 +1,33 @@
+﻿Сборка начата 13.12.2024 13:53:04.
+Уровень детализации журнала: Normal.     1>Проект "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm04\Serealize\Asm\Asm.vcxproj" в узле 2 (целевые объекты Build).
+     1>PrepareForBuild:
+         Структурированный вывод включен. Форматирование диагностики компилятора будет отражать иерархию ошибок. Подробнее см. https://aka.ms/cpp/structured-output.
+       InitializeBuildStatus:
+         Обращение к "x64\Debug\Asm.tlog\unsuccessfulbuild".
+       _MASM:
+         Assembling SE_Asm04.asm...
+         cmd.exe /C "C:\Users\Антон Шевчик\AppData\Local\Temp\tmpf19998ca82dc4c1ea9291ef559a6575e.cmd"
+         ml64.exe /c /nologo /Zi /Fo"x64\Debug\SE_Asm04.obj" /W3 /errorReport:prompt  /TaSE_Asm04.asm
+     1>SE_Asm04.asm(1): error A2008: syntax error : .
+     1>SE_Asm04.asm(2): error A2008: syntax error : .
+     1>SE_Asm04.asm(8): error A2008: syntax error : .
+     1>SE_Asm04.asm(25): error A2008: syntax error : main
+     1>SE_Asm04.asm(25): error A2088: END directive required at end of file
+     1>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\BuildCustomizations\masm.targets(70,5): error MSB3721: выход из команды "ml64.exe /c /nologo /Zi /Fo"x64\Debug\SE_Asm04.obj" /W3 /errorReport:prompt  /TaSE_Asm04.asm" с кодом "1".
+     1>Сборка проекта "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm04\Serealize\Asm\Asm.vcxproj" завершена (целевые объекты Build) с ошибкой.
+
+Ошибка сборки.
+
+       "C:\Users\Антон Шевчик\Documents\2 курс\3 семестр\Лабораторные КПО\SE_Asm04\Serealize\Asm\Asm.vcxproj" (целевой объект Build ) (1) ->
+       (Целевой объект _MASM) -> 
+         SE_Asm04.asm(1): error A2008: syntax error : .
+         SE_Asm04.asm(2): error A2008: syntax error : .
+         SE_Asm04.asm(8): error A2008: syntax error : .
+         SE_Asm04.asm(25): error A2008: syntax error : main
+         SE_Asm04.asm(25): error A2088: END directive required at end of file
+         C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\BuildCustomizations\masm.targets(70,5): error MSB3721: выход из команды "ml64.exe /c /nologo /Zi /Fo"x64\Debug\SE_Asm04.obj" /W3 /errorReport:prompt  /TaSE_Asm04.asm" с кодом "1".
+
+    Предупреждений: 0
+    Ошибок: 6
+
+Прошло времени 00:00:00.12
